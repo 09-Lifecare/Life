@@ -1,758 +1,843 @@
-// ========== NAVIGATION ========== 
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-
-        const page = link.dataset.page;
-        navigateToPage(page);
-    });
-});
-
+// DOM Elements
+const loginModal = document.getElementById('loginModal');
+const loginForm = document.getElementById('loginForm');
+const getStartedBtn = document.getElementById('getStartedBtn');
+const closeModalBtn = document.querySelector('.close');
+const loginNavBtn = document.getElementById('loginNavBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const navLinks = document.querySelectorAll('.nav-link');
+const pageLinks = document.querySelectorAll('[data-section]');
 const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('navLinks');
+const navLinksList = document.getElementById('navLinks');
+const menuLinks = document.querySelectorAll('.menu-link');
+const dashboardTabs = document.querySelectorAll('.dashboard-tab');
 
-hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
+// Data Storage
+let currentUser = null;
+let userData = {
+    tasks: [],
+    health: [],
+    mentalHealth: [],
+    habits: [],
+    expenses: [],
+    notes: [],
+    chat: []
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    checkLogin();
+    setupEventListeners();
+    loadData();
 });
 
-// Close hamburger menu when link is clicked
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-    });
-});
-
-// ========== PAGE NAVIGATION ========== 
-function navigateToPage(page) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    
-    switch(page) {
-        case 'home':
-            document.getElementById('homePage').classList.add('active');
-            break;
-        case 'features':
-            document.getElementById('featuresPage').classList.add('active');
-            break;
-        case 'about':
-            document.getElementById('aboutPage').classList.add('active');
-            break;
-        case 'contact':
-            document.getElementById('contactPage').classList.add('active');
-            break;
-    }
-}
-
-// ========== LOGIN ========== 
-function showLoginForm() {
-    document.getElementById('loginModal').classList.add('show');
-}
-
-function closeLoginForm() {
-    document.getElementById('loginModal').classList.remove('show');
-}
-
-function handleLogin(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
-    const errorMessage = document.getElementById('errorMessage');
-
-    // Simple validation
-    if (email && password && role) {
-        // Store user data in localStorage
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('userName', email.split('@')[0]);
-        localStorage.setItem('isLoggedIn', 'true');
-
-        // Show dashboard
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('dashboardPage').classList.add('active');
-        document.getElementById('logoutNav').style.display = 'block';
-
-        // Initialize dashboard
-        initializeDashboard();
-        closeLoginForm();
+// Check if user is logged in
+function checkLogin() {
+    const storedUser = localStorage.getItem('lifecareUser');
+    if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        showDashboard();
     } else {
-        errorMessage.textContent = 'Invalid login credentials!';
-        errorMessage.classList.add('show');
+        showHomePage();
     }
 }
 
-function logout() {
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('isLoggedIn');
-    
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('homePage').classList.add('active');
-    document.getElementById('logoutNav').style.display = 'none';
-    document.getElementById('loginForm').reset();
-}
-
-// ========== DASHBOARD INITIALIZATION ========== 
-function initializeDashboard() {
-    const userName = localStorage.getItem('userName') || 'User';
-    const userRole = localStorage.getItem('userRole') || 'Student';
-
-    document.getElementById('userGreeting').textContent = `Hi, ${userName}`;
-    document.getElementById('userRole').textContent = userRole;
-    document.getElementById('profileName').value = userName;
-    document.getElementById('profileNickname').value = userName;
-    document.getElementById('profileEmail').value = localStorage.getItem('userEmail');
-    document.getElementById('profileRole').value = userRole;
-
-    loadDashboardData();
-}
-
-// Sidebar navigation
-document.querySelectorAll('.sidebar-link').forEach(link => {
-    link.addEventListener('click', (e) => {
+// Setup Event Listeners
+function setupEventListeners() {
+    // Login Modal
+    getStartedBtn.addEventListener('click', openLoginModal);
+    loginNavBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-
-        const section = link.dataset.section;
-        showDashboardSection(section);
+        openLoginModal();
     });
-});
+    closeModalBtn.addEventListener('click', closeLoginModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === loginModal) {
+            closeLoginModal();
+        }
+    });
 
-function showDashboardSection(section) {
-    document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(section + 'Section').classList.add('active');
+    // Login Form
+    loginForm.addEventListener('submit', handleLogin);
+
+    // Logout
+    logoutBtn.addEventListener('click', handleLogout);
+
+    // Navigation Links
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (link.classList.contains('login-btn')) return;
+            e.preventDefault();
+            const section = link.getAttribute('data-section');
+            navigateToSection(section);
+        });
+    });
+
+    // Hamburger Menu
+    hamburger.addEventListener('click', () => {
+        navLinksList.classList.toggle('active');
+    });
+
+    // Close hamburger menu when link is clicked
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinksList.classList.remove('active');
+        });
+    });
+
+    // Sidebar Menu
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tab = link.getAttribute('data-tab');
+            switchDashboardTab(tab);
+            
+            // Update active menu link
+            menuLinks.forEach(m => m.classList.remove('active'));
+            link.classList.add('active');
+        });
+    });
+
+    // Dashboard Functions
+    document.getElementById('addTaskForm').addEventListener('submit', addTask);
+    document.getElementById('addHealthForm').addEventListener('submit', addHealthMetric);
+    document.getElementById('mentalHealthForm').addEventListener('submit', addMentalHealthEntry);
+    document.getElementById('addHabitForm').addEventListener('submit', addHabit);
+    document.getElementById('addExpenseForm').addEventListener('submit', addExpense);
+    document.getElementById('addNoteForm').addEventListener('submit', addNote);
+    document.getElementById('supportChatForm').addEventListener('submit', addChatMessage);
+    document.getElementById('profileForm').addEventListener('submit', saveProfile);
+    document.getElementById('contactForm').addEventListener('submit', handleContactForm);
+
+    // Breathing Exercise
+    document.getElementById('breathingBtn').addEventListener('click', startBreathingExercise);
+
+    // Recommendations Button
+    document.getElementById('getRecommendationBtn').addEventListener('click', getRecommendations);
+
+    // Stress Level Slider
+    document.getElementById('stressInput').addEventListener('change', function() {
+        document.getElementById('stressValue').textContent = this.value;
+    });
 }
 
-// ========== SMART ACADEMIC PLANNER ========== 
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+// Open Login Modal
+function openLoginModal() {
+    loginModal.style.display = 'block';
+}
 
-function addTask() {
-    const className = document.getElementById('className').value;
-    const taskName = document.getElementById('taskName').value;
-    const dueDate = document.getElementById('dueDate').value;
-    const priority = document.getElementById('priority').value;
+// Close Login Modal
+function closeLoginModal() {
+    loginModal.style.display = 'none';
+    loginForm.reset();
+    document.getElementById('loginError').style.display = 'none';
+}
 
-    if (taskName && className && dueDate) {
-        const task = {
-            id: Date.now(),
-            className,
-            taskName,
-            dueDate,
-            priority,
-            completed: false
+// Handle Login
+function handleLogin(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const role = document.getElementById('loginRole').value;
+
+    if (email && password && role) {
+        currentUser = {
+            email: email,
+            role: role,
+            nickname: email.split('@')[0]
         };
-        tasks.push(task);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
+
+        localStorage.setItem('lifecareUser', JSON.stringify(currentUser));
+        localStorage.setItem('lifecareData', JSON.stringify(userData));
         
-        document.getElementById('className').value = '';
-        document.getElementById('taskName').value = '';
-        document.getElementById('dueDate').value = '';
-        
-        renderTasks();
-        updateDashboardStats();
+        closeLoginModal();
+        showDashboard();
+    } else {
+        showLoginError();
     }
 }
 
-function renderTasks() {
+// Show Login Error
+function showLoginError() {
+    const errorMsg = document.getElementById('loginError');
+    errorMsg.style.display = 'block';
+    setTimeout(() => {
+        errorMsg.style.display = 'none';
+    }, 3000);
+}
+
+// Handle Logout
+function handleLogout(e) {
+    e.preventDefault();
+    localStorage.removeItem('lifecareUser');
+    localStorage.removeItem('lifecareData');
+    currentUser = null;
+    userData = {
+        tasks: [],
+        health: [],
+        mentalHealth: [],
+        habits: [],
+        expenses: [],
+        notes: [],
+        chat: []
+    };
+    showHomePage();
+}
+
+// Show Dashboard
+function showDashboard() {
+    // Hide home page sections
+    document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Show dashboard
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('dashboard').classList.add('active');
+    
+    // Update user greeting
+    document.getElementById('userGreeting').textContent = 'Hi, ' + currentUser.nickname;
+    
+    // Show user nav items
+    document.getElementById('loginNavItem').style.display = 'none';
+    document.getElementById('userNavItem').style.display = 'block';
+    
+    // Load and display data
+    loadData();
+    updateDashboardOverview();
+    switchDashboardTab('dashboard-overview');
+    menuLinks[0].classList.add('active');
+}
+
+// Show Home Page
+function showHomePage() {
+    // Show home page sections
+    document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.getElementById('home').classList.add('active');
+    document.getElementById('dashboard').style.display = 'none';
+    
+    // Show login nav items
+    document.getElementById('loginNavItem').style.display = 'block';
+    document.getElementById('userNavItem').style.display = 'none';
+    
+    // Reset navigation
+    navLinks.forEach(link => link.classList.remove('active'));
+    navLinks[0].classList.add('active');
+}
+
+// Navigate to Section
+function navigateToSection(section) {
+    document.querySelectorAll('.page-section').forEach(s => {
+        s.classList.remove('active');
+    });
+    document.getElementById(section).classList.add('active');
+    
+    // Update active nav link
+    navLinks.forEach(link => {
+        if (link.getAttribute('data-section') === section) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
+// Switch Dashboard Tab
+function switchDashboardTab(tabName) {
+    dashboardTabs.forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+}
+
+// Save Data
+function saveData() {
+    if (currentUser) {
+        localStorage.setItem('lifecareData', JSON.stringify(userData));
+    }
+}
+
+// Load Data
+function loadData() {
+    const storedData = localStorage.getItem('lifecareData');
+    if (storedData) {
+        userData = JSON.parse(storedData);
+    }
+    displayAllData();
+}
+
+// Display All Data
+function displayAllData() {
+    displayTasks();
+    displayHealthHistory();
+    displayMentalHealthHistory();
+    displayHabits();
+    displayExpenses();
+    displayNotes();
+    displayChatMessages();
+    loadProfile();
+}
+
+// ============ SMART ACADEMIC PLANNER ============
+
+// Add Task
+function addTask(e) {
+    e.preventDefault();
+    
+    const taskName = document.getElementById('taskName').value;
+    const taskDueDate = document.getElementById('taskDueDate').value;
+    const taskPriority = document.getElementById('taskPriority').value;
+
+    const task = {
+        id: Date.now(),
+        name: taskName,
+        dueDate: taskDueDate,
+        priority: taskPriority,
+        completed: false
+    };
+
+    userData.tasks.push(task);
+    saveData();
+    displayTasks();
+    updateDashboardOverview();
+    document.getElementById('addTaskForm').reset();
+}
+
+// Display Tasks
+function displayTasks() {
     const tasksList = document.getElementById('tasksList');
     tasksList.innerHTML = '';
 
-    tasks.forEach(task => {
-        const taskEl = document.createElement('div');
-        taskEl.className = 'item';
-        taskEl.innerHTML = `
-            <div>
-                <strong>${task.className}</strong> - ${task.taskName}<br>
-                Due: ${task.dueDate} | Priority: ${task.priority}
+    if (userData.tasks.length === 0) {
+        tasksList.innerHTML = '<p>No tasks yet. Add one to get started.</p>';
+        return;
+    }
+
+    userData.tasks.forEach(task => {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = `task-item ${task.completed ? 'completed' : ''}`;
+        
+        taskDiv.innerHTML = `
+            <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                   onchange="toggleTask(${task.id})">
+            <div class="task-details">
+                <div class="task-name">${task.name}</div>
+                <div class="task-due-date">Due: ${task.dueDate}</div>
             </div>
-            <div>
-                <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
-                <button onclick="deleteTask(${task.id})">Delete</button>
-            </div>
+            <span class="task-priority ${task.priority}">${task.priority}</span>
+            <button class="task-delete-btn" onclick="deleteTask(${task.id})">Delete</button>
         `;
-        tasksList.appendChild(taskEl);
+        
+        tasksList.appendChild(taskDiv);
     });
 }
 
-function toggleTask(id) {
-    const task = tasks.find(t => t.id === id);
+// Toggle Task
+function toggleTask(taskId) {
+    const task = userData.tasks.find(t => t.id === taskId);
     if (task) {
         task.completed = !task.completed;
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        renderTasks();
-        updateDashboardStats();
+        saveData();
+        displayTasks();
+        updateDashboardOverview();
     }
 }
 
-function deleteTask(id) {
-    tasks = tasks.filter(t => t.id !== id);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    renderTasks();
-    updateDashboardStats();
+// Delete Task
+function deleteTask(taskId) {
+    userData.tasks = userData.tasks.filter(t => t.id !== taskId);
+    saveData();
+    displayTasks();
+    updateDashboardOverview();
 }
 
-// ========== HEALTH & WELLNESS ========== 
-let healthData = JSON.parse(localStorage.getItem('healthData')) || {
-    waterIntake: [],
-    sleepHours: [],
-    activities: [],
-    meals: [],
-    medications: []
-};
+// ============ HEALTH AND WELLNESS MONITORING ============
 
-function addWaterIntake() {
-    const amount = parseFloat(document.getElementById('waterAmount').value);
-    if (amount > 0) {
-        healthData.waterIntake.push({
-            date: new Date().toLocaleDateString(),
-            amount: amount
-        });
-        localStorage.setItem('healthData', JSON.stringify(healthData));
-        document.getElementById('waterAmount').value = '';
-        updateHealthDisplay();
-        updateDashboardStats();
-    }
-}
-
-function addSleepLog() {
-    const hours = parseFloat(document.getElementById('sleepAmount').value);
-    if (hours > 0) {
-        healthData.sleepHours.push({
-            date: new Date().toLocaleDateString(),
-            hours: hours
-        });
-        localStorage.setItem('healthData', JSON.stringify(healthData));
-        document.getElementById('sleepAmount').value = '';
-        updateHealthDisplay();
-        updateDashboardStats();
-    }
-}
-
-function addActivity() {
-    const activity = document.getElementById('activity').value;
-    const duration = parseFloat(document.getElementById('activityDuration').value);
-    if (activity && duration > 0) {
-        healthData.activities.push({
-            date: new Date().toLocaleDateString(),
-            activity: activity,
-            duration: duration
-        });
-        localStorage.setItem('healthData', JSON.stringify(healthData));
-        document.getElementById('activity').value = '';
-        document.getElementById('activityDuration').value = '';
-        updateDashboardStats();
-    }
-}
-
-function addMeal() {
-    const meal = document.getElementById('meal').value;
-    const nutrition = document.getElementById('nutrition').value;
-    if (meal) {
-        healthData.meals.push({
-            date: new Date().toLocaleDateString(),
-            meal: meal,
-            nutrition: nutrition
-        });
-        localStorage.setItem('healthData', JSON.stringify(healthData));
-        document.getElementById('meal').value = '';
-        document.getElementById('nutrition').value = '';
-    }
-}
-
-function addMedication() {
-    const med = document.getElementById('medication').value;
-    const time = document.getElementById('medTime').value;
-    if (med && time) {
-        healthData.medications.push({
-            date: new Date().toLocaleDateString(),
-            medication: med,
-            time: time
-        });
-        localStorage.setItem('healthData', JSON.stringify(healthData));
-        document.getElementById('medication').value = '';
-        document.getElementById('medTime').value = '';
-    }
-}
-
-function updateHealthDisplay() {
-    const today = new Date().toLocaleDateString();
-    const todayWater = healthData.waterIntake
-        .filter(w => w.date === today)
-        .reduce((sum, w) => sum + w.amount, 0);
+// Add Health Metric
+function addHealthMetric(e) {
+    e.preventDefault();
     
-    const avgSleep = healthData.sleepHours.length > 0
-        ? (healthData.sleepHours.reduce((sum, s) => sum + s.hours, 0) / healthData.sleepHours.length).toFixed(1)
-        : 0;
+    const metric = document.getElementById('healthMetric').value;
+    const value = document.getElementById('healthValue').value;
+    const date = document.getElementById('healthDate').value;
 
-    document.getElementById('waterTotal').textContent = todayWater.toFixed(1);
-    document.getElementById('sleepAvg').textContent = avgSleep;
+    const healthEntry = {
+        id: Date.now(),
+        metric: metric,
+        value: value,
+        date: date
+    };
+
+    userData.health.push(healthEntry);
+    saveData();
+    displayHealthHistory();
+    updateDashboardOverview();
+    document.getElementById('addHealthForm').reset();
 }
 
-// ========== MENTAL HEALTH & STRESS ========== 
-let mentalHealthData = JSON.parse(localStorage.getItem('mentalHealthData')) || {
-    mood: [],
-    stress: [],
-    journal: []
-};
+// Display Health History
+function displayHealthHistory() {
+    const healthList = document.getElementById('healthList');
+    healthList.innerHTML = '';
 
-function logMood(mood) {
-    mentalHealthData.mood.push({
-        date: new Date().toLocaleString(),
-        mood: mood
-    });
-    localStorage.setItem('mentalHealthData', JSON.stringify(mentalHealthData));
-    document.getElementById('latestMood').textContent = mood;
-    updateDashboardStats();
-}
+    if (userData.health.length === 0) {
+        healthList.innerHTML = '<p>No health data logged yet.</p>';
+        return;
+    }
 
-function logStress() {
-    const level = document.getElementById('stressLevel').value;
-    mentalHealthData.stress.push({
-        date: new Date().toLocaleString(),
-        level: level
-    });
-    localStorage.setItem('mentalHealthData', JSON.stringify(mentalHealthData));
-    updateDashboardStats();
-}
-
-document.getElementById('stressLevel')?.addEventListener('input', (e) => {
-    document.getElementById('stressValue').textContent = e.target.value + '/10';
-});
-
-function startBreathingExercise() {
-    const text = document.getElementById('breathingText');
-    let cycle = 0;
-    const cycles = ['Inhale...', 'Hold...', 'Exhale...'];
-    
-    const interval = setInterval(() => {
-        text.textContent = cycles[cycle % 3];
-        cycle++;
+    userData.health.slice().reverse().forEach(entry => {
+        const healthDiv = document.createElement('div');
+        healthDiv.className = 'health-item';
         
-        if (cycle === 12) {
+        healthDiv.innerHTML = `
+            <div class="health-metric">${entry.metric}</div>
+            <div class="health-value">${entry.value}</div>
+            <div class="health-date">Date: ${entry.date}</div>
+            <button class="health-delete-btn" onclick="deleteHealth(${entry.id})">Delete</button>
+        `;
+        
+        healthList.appendChild(healthDiv);
+    });
+}
+
+// Delete Health Entry
+function deleteHealth(healthId) {
+    userData.health = userData.health.filter(h => h.id !== healthId);
+    saveData();
+    displayHealthHistory();
+    updateDashboardOverview();
+}
+
+// ============ MENTAL HEALTH AND STRESS SUPPORT ============
+
+// Add Mental Health Entry
+function addMentalHealthEntry(e) {
+    e.preventDefault();
+    
+    const mood = document.getElementById('moodTracker').value;
+    const stress = document.getElementById('stressInput').value;
+    const journal = document.getElementById('journalEntry').value;
+
+    const mentalEntry = {
+        id: Date.now(),
+        mood: mood,
+        stress: stress,
+        journal: journal,
+        date: new Date().toLocaleDateString()
+    };
+
+    userData.mentalHealth.push(mentalEntry);
+    saveData();
+    displayMentalHealthHistory();
+    updateDashboardOverview();
+    document.getElementById('mentalHealthForm').reset();
+    document.getElementById('stressValue').textContent = '5';
+    document.getElementById('stressInput').value = '5';
+}
+
+// Display Mental Health History
+function displayMentalHealthHistory() {
+    const mentalList = document.getElementById('mentalHealthList');
+    mentalList.innerHTML = '';
+
+    if (userData.mentalHealth.length === 0) {
+        mentalList.innerHTML = '<p>No entries yet.</p>';
+        return;
+    }
+
+    userData.mentalHealth.slice().reverse().forEach(entry => {
+        const mentalDiv = document.createElement('div');
+        mentalDiv.className = 'mental-item';
+        
+        mentalDiv.innerHTML = `
+            <div class="mental-mood">Mood: ${entry.mood}</div>
+            <div class="mental-stress">Stress Level: ${entry.stress}/10</div>
+            ${entry.journal ? `<div class="mental-journal">"${entry.journal}"</div>` : ''}
+            <div class="mental-date">Date: ${entry.date}</div>
+            <button class="mental-delete-btn" onclick="deleteMentalHealth(${entry.id})">Delete</button>
+        `;
+        
+        mentalList.appendChild(mentalDiv);
+    });
+}
+
+// Delete Mental Health Entry
+function deleteMentalHealth(mentalId) {
+    userData.mentalHealth = userData.mentalHealth.filter(m => m.id !== mentalId);
+    saveData();
+    displayMentalHealthHistory();
+    updateDashboardOverview();
+}
+
+// Start Breathing Exercise
+function startBreathingExercise() {
+    const animation = document.getElementById('breathingAnimation');
+    const text = document.getElementById('breathingText');
+    const btn = document.getElementById('breathingBtn');
+    
+    animation.style.display = 'block';
+    btn.disabled = true;
+    
+    const steps = ['Breathe In...', 'Hold...', 'Breathe Out...', 'Hold...'];
+    let step = 0;
+    let time = 0;
+
+    const interval = setInterval(() => {
+        text.textContent = steps[step];
+        step = (step + 1) % steps.length;
+        time++;
+
+        if (time >= 8) {
             clearInterval(interval);
-            text.textContent = 'Breathing exercise completed!';
+            animation.style.display = 'none';
+            text.textContent = '';
+            btn.disabled = false;
         }
     }, 2000);
 }
 
-function generateMotivationalTip() {
-    const tips = [
-        '🌟 You are stronger than you think. Take it one step at a time!',
-        '💪 Every small progress is a victory. Celebrate your wins!',
-        '🌈 Challenges are opportunities to grow. Embrace them!',
-        '😊 Your mental health matters. Take care of yourself!',
-        '🎯 Focus on what you can control and let go of the rest!',
-        '💖 Be kind to yourself. You deserve compassion!',
-        '✨ You have overcome 100% of your worst days. You\'re unstoppable!',
-        '🚀 Your potential is limitless. Keep pushing forward!'
-    ];
+// ============ DAILY LIFE MANAGEMENT ============
+
+// Add Habit
+function addHabit(e) {
+    e.preventDefault();
     
-    const randomTip = tips[Math.floor(Math.random() * tips.length)];
-    document.getElementById('motivationalTip').textContent = randomTip;
-}
-
-function saveJournalEntry() {
-    const entry = document.getElementById('journalEntry').value;
-    if (entry) {
-        mentalHealthData.journal.push({
-            date: new Date().toLocaleString(),
-            entry: entry
-        });
-        localStorage.setItem('mentalHealthData', JSON.stringify(mentalHealthData));
-        document.getElementById('journalEntry').value = '';
-        
-        const journalHistory = document.getElementById('journalHistory');
-        const entryEl = document.createElement('div');
-        entryEl.className = 'item';
-        entryEl.innerHTML = `
-            <div>
-                <strong>${mentalHealthData.journal[mentalHealthData.journal.length - 1].date}</strong><br>
-                ${entry}
-            </div>
-        `;
-        journalHistory.appendChild(entryEl);
-    }
-}
-
-// ========== DAILY LIFE MANAGEMENT ========== 
-let dailyData = JSON.parse(localStorage.getItem('dailyData')) || {
-    habits: [],
-    notes: [],
-    expenses: [],
-    emergencyContacts: []
-};
-
-function addHabit() {
     const habitName = document.getElementById('habitName').value;
-    if (habitName) {
-        dailyData.habits.push({
-            id: Date.now(),
-            name: habitName,
-            completed: false,
-            createdDate: new Date().toLocaleDateString()
-        });
-        localStorage.setItem('dailyData', JSON.stringify(dailyData));
-        document.getElementById('habitName').value = '';
-        renderHabits();
-        updateDashboardStats();
-    }
+
+    const habit = {
+        id: Date.now(),
+        name: habitName,
+        completed: false
+    };
+
+    userData.habits.push(habit);
+    saveData();
+    displayHabits();
+    updateDashboardOverview();
+    document.getElementById('addHabitForm').reset();
 }
 
-function renderHabits() {
+// Display Habits
+function displayHabits() {
     const habitsList = document.getElementById('habitsList');
     habitsList.innerHTML = '';
 
-    dailyData.habits.forEach(habit => {
-        const habitEl = document.createElement('div');
-        habitEl.className = 'item';
-        habitEl.innerHTML = `
-            <div>
-                <strong>${habit.name}</strong>
-            </div>
-            <div>
-                <input type="checkbox" ${habit.completed ? 'checked' : ''} onchange="toggleHabit(${habit.id})">
-                <button onclick="deleteHabit(${habit.id})">Delete</button>
-            </div>
+    if (userData.habits.length === 0) {
+        habitsList.innerHTML = '<p>No habits yet.</p>';
+        return;
+    }
+
+    userData.habits.forEach(habit => {
+        const habitDiv = document.createElement('div');
+        habitDiv.className = 'habit-item';
+        
+        habitDiv.innerHTML = `
+            <input type="checkbox" ${habit.completed ? 'checked' : ''} 
+                   onchange="toggleHabit(${habit.id})">
+            <div class="habit-name">${habit.name}</div>
+            <button class="habit-delete-btn" onclick="deleteHabit(${habit.id})">Delete</button>
         `;
-        habitsList.appendChild(habitEl);
+        
+        habitsList.appendChild(habitDiv);
     });
 }
 
-function toggleHabit(id) {
-    const habit = dailyData.habits.find(h => h.id === id);
+// Toggle Habit
+function toggleHabit(habitId) {
+    const habit = userData.habits.find(h => h.id === habitId);
     if (habit) {
         habit.completed = !habit.completed;
-        localStorage.setItem('dailyData', JSON.stringify(dailyData));
-        renderHabits();
-        updateDashboardStats();
+        saveData();
+        displayHabits();
+        updateDashboardOverview();
     }
 }
 
-function deleteHabit(id) {
-    dailyData.habits = dailyData.habits.filter(h => h.id !== id);
-    localStorage.setItem('dailyData', JSON.stringify(dailyData));
-    renderHabits();
-    updateDashboardStats();
+// Delete Habit
+function deleteHabit(habitId) {
+    userData.habits = userData.habits.filter(h => h.id !== habitId);
+    saveData();
+    displayHabits();
+    updateDashboardOverview();
 }
 
-function addNote() {
-    const title = document.getElementById('noteTitle').value;
-    const content = document.getElementById('noteContent').value;
-    if (title && content) {
-        dailyData.notes.push({
-            id: Date.now(),
-            title: title,
-            content: content,
-            createdDate: new Date().toLocaleString()
-        });
-        localStorage.setItem('dailyData', JSON.stringify(dailyData));
-        document.getElementById('noteTitle').value = '';
-        document.getElementById('noteContent').value = '';
-        renderNotes();
-    }
-}
-
-function renderNotes() {
-    const notesList = document.getElementById('notesList');
-    notesList.innerHTML = '';
-
-    dailyData.notes.forEach(note => {
-        const noteEl = document.createElement('div');
-        noteEl.className = 'item';
-        noteEl.innerHTML = `
-            <div>
-                <strong>${note.title}</strong><br>
-                ${note.content}<br>
-                <small>${note.createdDate}</small>
-            </div>
-            <button onclick="deleteNote(${note.id})">Delete</button>
-        `;
-        notesList.appendChild(noteEl);
-    });
-}
-
-function deleteNote(id) {
-    dailyData.notes = dailyData.notes.filter(n => n.id !== id);
-    localStorage.setItem('dailyData', JSON.stringify(dailyData));
-    renderNotes();
-}
-
-function addExpense() {
-    const item = document.getElementById('expenseItem').value;
+// Add Expense
+function addExpense(e) {
+    e.preventDefault();
+    
+    const description = document.getElementById('expenseDescription').value;
     const amount = parseFloat(document.getElementById('expenseAmount').value);
-    if (item && amount > 0) {
-        dailyData.expenses.push({
-            id: Date.now(),
-            item: item,
-            amount: amount,
-            date: new Date().toLocaleDateString()
-        });
-        localStorage.setItem('dailyData', JSON.stringify(dailyData));
-        document.getElementById('expenseItem').value = '';
-        document.getElementById('expenseAmount').value = '';
-        renderExpenses();
-        updateDashboardStats();
-    }
+    const date = document.getElementById('expenseDate').value;
+
+    const expense = {
+        id: Date.now(),
+        description: description,
+        amount: amount,
+        date: date
+    };
+
+    userData.expenses.push(expense);
+    saveData();
+    displayExpenses();
+    updateDashboardOverview();
+    document.getElementById('addExpenseForm').reset();
 }
 
-function renderExpenses() {
+// Display Expenses
+function displayExpenses() {
     const expensesList = document.getElementById('expensesList');
     expensesList.innerHTML = '';
 
-    let totalExpenses = 0;
-    dailyData.expenses.forEach(expense => {
-        totalExpenses += expense.amount;
-        const expenseEl = document.createElement('div');
-        expenseEl.className = 'item';
-        expenseEl.innerHTML = `
-            <div>
-                <strong>${expense.item}</strong> - ₱${expense.amount.toFixed(2)}<br>
-                <small>${expense.date}</small>
-            </div>
-            <button onclick="deleteExpense(${expense.id})">Delete</button>
-        `;
-        expensesList.appendChild(expenseEl);
-    });
-
-    document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2);
-    const remainingBudget = 5000 - totalExpenses;
-    document.getElementById('remainingBudget').textContent = remainingBudget.toFixed(2);
-}
-
-function deleteExpense(id) {
-    dailyData.expenses = dailyData.expenses.filter(e => e.id !== id);
-    localStorage.setItem('dailyData', JSON.stringify(dailyData));
-    renderExpenses();
-    updateDashboardStats();
-}
-
-function addEmergencyContact() {
-    const name = document.getElementById('contactPerson').value;
-    const phone = document.getElementById('contactPhone').value;
-    if (name && phone) {
-        dailyData.emergencyContacts.push({
-            id: Date.now(),
-            name: name,
-            phone: phone
-        });
-        localStorage.setItem('dailyData', JSON.stringify(dailyData));
-        document.getElementById('contactPerson').value = '';
-        document.getElementById('contactPhone').value = '';
-        renderEmergencyContacts();
+    if (userData.expenses.length === 0) {
+        expensesList.innerHTML = '<p>No expenses logged yet.</p>';
+        return;
     }
-}
 
-function renderEmergencyContacts() {
-    const contactsList = document.getElementById('emergencyContactsList');
-    contactsList.innerHTML = '';
-
-    dailyData.emergencyContacts.forEach(contact => {
-        const contactEl = document.createElement('div');
-        contactEl.className = 'item';
-        contactEl.innerHTML = `
-            <div>
-                <strong>${contact.name}</strong><br>
-                <a href="tel:${contact.phone}">${contact.phone}</a>
-            </div>
-            <button onclick="deleteContact(${contact.id})">Delete</button>
+    userData.expenses.slice().reverse().forEach(expense => {
+        const expenseDiv = document.createElement('div');
+        expenseDiv.className = 'expense-item';
+        
+        expenseDiv.innerHTML = `
+            <div class="expense-description">${expense.description}</div>
+            <div class="expense-amount">PHP ${expense.amount.toFixed(2)}</div>
+            <div class="expense-date">Date: ${expense.date}</div>
+            <button class="expense-delete-btn" onclick="deleteExpense(${expense.id})">Delete</button>
         `;
-        contactsList.appendChild(contactEl);
+        
+        expensesList.appendChild(expenseDiv);
     });
 }
 
-function deleteContact(id) {
-    dailyData.emergencyContacts = dailyData.emergencyContacts.filter(c => c.id !== id);
-    localStorage.setItem('dailyData', JSON.stringify(dailyData));
-    renderEmergencyContacts();
+// Delete Expense
+function deleteExpense(expenseId) {
+    userData.expenses = userData.expenses.filter(e => e.id !== expenseId);
+    saveData();
+    displayExpenses();
+    updateDashboardOverview();
 }
 
-// ========== STUDENT SUPPORT SYSTEM ========== 
-let supportData = JSON.parse(localStorage.getItem('supportData')) || {
-    chat: [],
-    community: []
-};
-
-function sendChatMessage() {
-    const message = document.getElementById('chatMessage').value;
-    if (message) {
-        supportData.chat.push({
-            user: localStorage.getItem('userName') || 'You',
-            message: message,
-            time: new Date().toLocaleTimeString()
-        });
-        localStorage.setItem('supportData', JSON.stringify(supportData));
-        document.getElementById('chatMessage').value = '';
-        renderChatBox();
-    }
-}
-
-function renderChatBox() {
-    const chatBox = document.getElementById('chatBox');
-    chatBox.innerHTML = '';
-
-    supportData.chat.forEach(msg => {
-        const msgEl = document.createElement('div');
-        msgEl.style.cssText = 'padding: 10px; margin: 5px 0; background: #e3f2fd; border-radius: 5px;';
-        msgEl.innerHTML = `<strong>${msg.user}</strong> (${msg.time})<br>${msg.message}`;
-        chatBox.appendChild(msgEl);
-    });
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function getAcademicEncouragement() {
-    const messages = [
-        'You\'re doing an amazing job! Keep up the hard work! 🎓',
-        'Every challenge you face is making you stronger! 💪',
-        'You have the skills and determination to succeed! ✨',
-        'Your effort today will pay off tomorrow! 🚀',
-        'Believe in yourself - you are capable of great things! 🌟'
-    ];
+// Add Note
+function addNote(e) {
+    e.preventDefault();
     
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    document.getElementById('encouragementMessage').textContent = randomMessage;
+    const title = document.getElementById('noteTitle').value;
+    const content = document.getElementById('noteContent').value;
+
+    const note = {
+        id: Date.now(),
+        title: title,
+        content: content,
+        date: new Date().toLocaleDateString()
+    };
+
+    userData.notes.push(note);
+    saveData();
+    displayNotes();
+    document.getElementById('addNoteForm').reset();
 }
 
-function generateSelfCareRec() {
+// Display Notes
+function displayNotes() {
+    const notesList = document.getElementById('notesList');
+    notesList.innerHTML = '';
+
+    if (userData.notes.length === 0) {
+        notesList.innerHTML = '<p>No notes yet.</p>';
+        return;
+    }
+
+    userData.notes.slice().reverse().forEach(note => {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'note-item';
+        
+        noteDiv.innerHTML = `
+            <div class="note-title">${note.title}</div>
+            <div class="note-content">${note.content}</div>
+            <div class="note-date">Date: ${note.date}</div>
+            <button class="note-delete-btn" onclick="deleteNote(${note.id})">Delete</button>
+        `;
+        
+        notesList.appendChild(noteDiv);
+    });
+}
+
+// Delete Note
+function deleteNote(noteId) {
+    userData.notes = userData.notes.filter(n => n.id !== noteId);
+    saveData();
+    displayNotes();
+}
+
+// ============ STUDENT SUPPORT SYSTEM ============
+
+// Add Chat Message
+function addChatMessage(e) {
+    e.preventDefault();
+    
+    const message = document.getElementById('supportMessage').value;
+
+    const chatEntry = {
+        id: Date.now(),
+        author: currentUser.nickname,
+        message: message,
+        time: new Date().toLocaleTimeString()
+    };
+
+    userData.chat.push(chatEntry);
+    saveData();
+    displayChatMessages();
+    document.getElementById('supportChatForm').reset();
+}
+
+// Display Chat Messages
+function displayChatMessages() {
+    const chatList = document.getElementById('supportChatList');
+    chatList.innerHTML = '';
+
+    if (userData.chat.length === 0) {
+        chatList.innerHTML = '<p>No messages yet. Start a conversation.</p>';
+        return;
+    }
+
+    userData.chat.slice().reverse().forEach(chat => {
+        const chatDiv = document.createElement('div');
+        chatDiv.className = 'chat-message';
+        
+        chatDiv.innerHTML = `
+            <div class="chat-author">${chat.author}</div>
+            <div class="chat-text">${chat.message}</div>
+            <div class="chat-time">${chat.time}</div>
+        `;
+        
+        chatList.appendChild(chatDiv);
+    });
+}
+
+// Get Recommendations
+function getRecommendations() {
     const recommendations = [
-        '💧 Stay hydrated! Drink more water today.',
-        '😴 Get a good night\'s sleep. Your body needs rest.',
-        '🧘 Try some meditation or deep breathing exercises.',
-        '🏃 Take a walk or do some light exercise.',
-        '📖 Read something inspirational or relaxing.',
-        '☕ Take a break and enjoy your favorite beverage.',
-        '🎵 Listen to your favorite music to uplift your mood.'
-    ];
-    
-    const randomRec = recommendations[Math.floor(Math.random() * recommendations.length)];
-    document.getElementById('selfCareRec').textContent = '📋 ' + randomRec;
-}
-
-function postToCommunity() {
-    const post = document.getElementById('communityPost').value;
-    if (post) {
-        supportData.community.push({
-            user: localStorage.getItem('userName') || 'Anonymous',
-            post: post,
-            time: new Date().toLocaleString()
-        });
-        localStorage.setItem('supportData', JSON.stringify(supportData));
-        document.getElementById('communityPost').value = '';
-        renderCommunityBoard();
-        updateDashboardStats();
-    }
-}
-
-function renderCommunityBoard() {
-    const board = document.getElementById('communityBoard');
-    board.innerHTML = '';
-
-    supportData.community.forEach(post => {
-        const postEl = document.createElement('div');
-        postEl.className = 'item';
-        postEl.style.marginBottom = '1rem';
-        postEl.innerHTML = `
-            <div>
-                <strong>${post.user}</strong> - ${post.time}<br>
-                ${post.post}
-            </div>
-        `;
-        board.appendChild(postEl);
-    });
-}
-
-// ========== PROFILE ========== 
-function saveProfile() {
-    const nickname = document.getElementById('profileNickname').value;
-    const name = document.getElementById('profileName').value;
-
-    if (nickname && name) {
-        localStorage.setItem('userName', nickname);
-        document.getElementById('userGreeting').textContent = `Hi, ${nickname}`;
-        alert('Profile updated successfully!');
-    }
-}
-
-// ========== DASHBOARD NAVIGATION ========== 
-function navigateDashboard(section) {
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        link.classList.remove('active');
-        if (link.dataset.section === section) {
-            link.classList.add('active');
+        {
+            title: "Take a Break",
+            text: "You've been working hard. Take a 15-minute break and stretch."
+        },
+        {
+            title: "Hydrate",
+            text: "Drink some water. Staying hydrated improves focus and mood."
+        },
+        {
+            title: "Go for a Walk",
+            text: "A short walk outside can help reduce stress and clear your mind."
+        },
+        {
+            title: "Practice Meditation",
+            text: "Even 5 minutes of meditation can help calm your mind."
+        },
+        {
+            title: "Call a Friend",
+            text: "Social connection is important for mental health. Reach out to someone you care about."
+        },
+        {
+            title: "Get Some Sleep",
+            text: "If you're feeling tired, prioritize getting enough sleep tonight."
         }
+    ];
+
+    const recommendationsList = document.getElementById('recommendationsList');
+    recommendationsList.innerHTML = '';
+
+    // Get 2-3 random recommendations
+    const shuffled = recommendations.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+    shuffled.forEach(rec => {
+        const recDiv = document.createElement('div');
+        recDiv.className = 'recommendation-item';
+        
+        recDiv.innerHTML = `
+            <div class="recommendation-title">${rec.title}</div>
+            <div class="recommendation-text">${rec.text}</div>
+        `;
+        
+        recommendationsList.appendChild(recDiv);
     });
-    showDashboardSection(section);
 }
 
-// ========== UPDATE DASHBOARD STATS ========== 
-function updateDashboardStats() {
-    // Tasks
-    const completedTasks = tasks.filter(t => t.completed).length;
-    document.getElementById('totalTasks').textContent = tasks.length;
+// ============ PROFILE MANAGEMENT ============
+
+// Load Profile
+function loadProfile() {
+    if (currentUser) {
+        document.getElementById('profileNickname').value = currentUser.nickname;
+        document.getElementById('profileEmail').value = currentUser.email;
+        document.getElementById('profileRole').value = currentUser.role;
+    }
+}
+
+// Save Profile
+function saveProfile(e) {
+    e.preventDefault();
+    
+    currentUser.nickname = document.getElementById('profileNickname').value;
+    currentUser.email = document.getElementById('profileEmail').value;
+    currentUser.role = document.getElementById('profileRole').value;
+
+    localStorage.setItem('lifecareUser', JSON.stringify(currentUser));
+    document.getElementById('userGreeting').textContent = 'Hi, ' + currentUser.nickname;
+    
+    alert('Profile updated successfully!');
+}
+
+// ============ DASHBOARD OVERVIEW ============
+
+// Update Dashboard Overview
+function updateDashboardOverview() {
+    // Academic Planner
+    const totalTasks = userData.tasks.length;
+    const completedTasks = userData.tasks.filter(t => t.completed).length;
+    document.getElementById('totalTasks').textContent = totalTasks;
     document.getElementById('completedTasks').textContent = completedTasks;
 
     // Health
-    const today = new Date().toLocaleDateString();
-    const todayWater = healthData.waterIntake
-        .filter(w => w.date === today)
-        .reduce((sum, w) => sum + w.amount, 0);
-    const avgSleep = healthData.sleepHours.length > 0
-        ? (healthData.sleepHours.reduce((sum, s) => sum + s.hours, 0) / healthData.sleepHours.length).toFixed(1)
-        : 0;
-    document.getElementById('waterIntake').textContent = todayWater.toFixed(1);
-    document.getElementById('sleepHours').textContent = avgSleep;
+    const waterEntry = userData.health.find(h => h.metric === 'Water Intake');
+    const sleepEntry = userData.health.find(h => h.metric === 'Sleep');
+    document.getElementById('waterIntake').textContent = waterEntry ? waterEntry.value : 0;
+    document.getElementById('sleepHours').textContent = sleepEntry ? sleepEntry.value : 0;
 
-    // Daily
-    const completedHabits = dailyData.habits.filter(h => h.completed).length;
-    document.getElementById('habitsTracked').textContent = completedHabits;
+    // Task Management
+    const pendingTasks = userData.tasks.filter(t => !t.completed).length;
+    const completedPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+    document.getElementById('pendingTasks').textContent = pendingTasks;
+    document.getElementById('completedPercent').textContent = completedPercent;
+
+    // Budget
+    const totalExpenses = userData.expenses.reduce((sum, e) => sum + e.amount, 0);
+    const budgetRemaining = 5000 - totalExpenses;
+    document.getElementById('budgetRemaining').textContent = budgetRemaining.toFixed(2);
+    document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2);
+
+    // Mental Health
+    const lastMental = userData.mentalHealth[userData.mentalHealth.length - 1];
+    const lastStress = lastMental ? lastMental.stress : 0;
+    const lastMood = lastMental ? lastMental.mood : 'Not Set';
+    document.getElementById('currentMood').textContent = lastMood;
+    document.getElementById('stressLevel').textContent = lastStress;
+
+    // Habits
+    const habitsCompleted = userData.habits.filter(h => h.completed).length;
+    document.getElementById('habitsCount').textContent = userData.habits.length;
+    document.getElementById('habitsCompleted').textContent = habitsCompleted;
+}
+
+// ============ CONTACT FORM ============
+
+// Handle Contact Form
+function handleContactForm(e) {
+    e.preventDefault();
     
-    const totalExpenses = dailyData.expenses.reduce((sum, e) => sum + e.amount, 0);
-    document.getElementById('budget').textContent = (5000 - totalExpenses).toFixed(2);
+    const name = document.getElementById('contactName').value;
+    const email = document.getElementById('contactEmail').value;
+    const message = document.getElementById('contactMessage').value;
 
-    // Mental
-    document.getElementById('moodEntries').textContent = mentalHealthData.mood.length;
-    const avgStress = mentalHealthData.stress.length > 0
-        ? (mentalHealthData.stress.reduce((sum, s) => parseInt(s.level), 0) / mentalHealthData.stress.length).toFixed(1)
-        : 0;
-    document.getElementById('avgStress').textContent = avgStress;
-
-    // Support
-    document.getElementById('communityPosts').textContent = supportData.community.length;
-    document.getElementById('supportMessages').textContent = supportData.chat.length;
+    alert(`Thank you for your message, ${name}!\n\nWe will get back to you soon at ${email}.`);
+    document.getElementById('contactForm').reset();
 }
-
-// ========== LOAD DASHBOARD DATA ========== 
-function loadDashboardData() {
-    renderTasks();
-    renderHabits();
-    renderNotes();
-    renderExpenses();
-    renderEmergencyContacts();
-    renderChatBox();
-    renderCommunityBoard();
-    updateHealthDisplay();
-    updateDashboardStats();
-}
-
-// ========== CONTACT FORM HANDLER ========== 
-function handleContactForm(event) {
-    event.preventDefault();
-    alert('Thank you for your message! We will get back to you soon.');
-    document.querySelector('.contact-form').reset();
-}
-
-// ========== CHECK IF USER IS LOGGED IN ========== 
-window.addEventListener('load', () => {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('dashboardPage').classList.add('active');
-        document.getElementById('logoutNav').style.display = 'block';
-        initializeDashboard();
-    } else {
-        document.getElementById('homePage').classList.add('active');
-    }
-});
