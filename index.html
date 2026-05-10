@@ -4,41 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LifeCare - Student Health & Life Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">LifeCare</div>
+            <div class="nav-logo">LifeCare</div>
             <div class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#home" class="nav-link active" data-page="home">Home</a></li>
-                <li><a href="#features" class="nav-link" data-page="features">Features</a></li>
-                <li><a href="#about" class="nav-link" data-page="about">About</a></li>
-                <li><a href="#contact" class="nav-link" data-page="contact">Contact</a></li>
-                <li id="logoutNav" style="display:none;">
-                    <button class="logout-btn" onclick="logout()">Logout</button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="#home" class="nav-link active">Home</a></li>
+                <li class="nav-item"><a href="#features" class="nav-link">Features</a></li>
+                <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                <li class="nav-item" id="logoutItem" style="display: none;">
+                    <button class="nav-link logout-btn" onclick="logout()">Logout</button>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <!-- HOME PAGE -->
-    <div id="homePage" class="page active">
+    <!-- Home Page -->
+    <section id="home" class="page home-page active-page">
         <!-- Hero Section -->
-        <section id="home" class="hero">
+        <div class="hero">
             <div class="hero-content">
                 <h1 class="hero-title">LifeCare</h1>
                 <p class="hero-tagline">Stay healthy. Stay organized. Stay prepared. Stay in control.</p>
-                <button class="cta-btn" onclick="showLoginForm()">Get Started</button>
+                <button class="btn btn-primary btn-large" onclick="navigateToSection('login')">Get Started</button>
             </div>
-        </section>
+        </div>
 
         <!-- What is LifeCare Section -->
         <section class="what-is-lifecare">
@@ -49,7 +49,7 @@
         </section>
 
         <!-- Core Features Section -->
-        <section class="core-features">
+        <section class="core-features" id="featuresSection">
             <div class="container">
                 <h2>Core Features of LifeCare</h2>
                 <div class="features-grid">
@@ -77,554 +77,483 @@
             </div>
         </section>
 
-        <!-- About Section (Home Page) -->
-        <section id="about" class="about-preview">
+        <!-- Login Section -->
+        <section class="login-section" id="login">
             <div class="container">
-                <h2>About LifeCare</h2>
-                <div class="about-content">
-                    <div class="about-box">
-                        <h3>What is LifeCare?</h3>
-                        <p>LifeCare: A Student Health & Life Management Companion is a comprehensive mobile application designed to help students manage their academic responsibilities, health, wellness, and daily routines in one place. Targeted particularly at nursing students and those in demanding academic programs, LifeCare provides tools to organize tasks, track health, monitor mental well-being, and offer emotional support. With its integrated platform, LifeCare empowers students to balance academic excellence with personal well-being.</p>
-                    </div>
-                    <div class="about-box">
-                        <h3>Mission</h3>
-                        <p>Our mission is to empower students to succeed academically, emotionally, and physically with LifeCare, an all-in-one digital companion. It helps students manage their academic workload, track physical and mental health, and maintain a balanced lifestyle through task management, wellness monitoring, emotional support, and self-care recommendations. Our goal is to enhance productivity, well-being, and academic success.</p>
-                    </div>
-                    <div class="about-box">
-                        <h3>Vision</h3>
-                        <p>We envision a future where students can effortlessly balance academic responsibilities, health, and personal life. LifeCare aims to be the leading tool that helps students manage tasks, prioritize self-care, and achieve their goals. Our vision is to build a community of students who are mentally healthy, physically active, and academically successful by providing the tools needed for success in both their studies and personal lives.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact Section (Home Page) -->
-        <section id="contact" class="contact-preview">
-            <div class="container">
-                <h2>Contact Us</h2>
-                <div class="contact-info">
-                    <p><strong>Email:</strong> lifecare000222@gmail.com</p>
-                    <p><strong>Phone:</strong> 09063088746</p>
-                    <p><strong>Location:</strong> Quezon City, Philippines</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Login Form Modal -->
-        <div id="loginModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeLoginForm()">&times;</span>
-                <h2>Login to LifeCare</h2>
-                <form id="loginForm" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="role">Role:</label>
-                        <select id="role" name="role" required>
-                            <option value="">Select your role</option>
-                            <option value="Nursing Student">Nursing Student</option>
-                            <option value="Student">Student</option>
-                            <option value="Other Professional">Other Professional</option>
-                        </select>
-                    </div>
-                    <div id="errorMessage" class="error-message"></div>
-                    <button type="submit" class="login-btn">Login</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- FEATURES PAGE -->
-    <div id="featuresPage" class="page">
-        <section class="features-page">
-            <div class="container">
-                <h1>Features</h1>
-                <div class="features-detail-grid">
-                    <div class="feature-detail-card">
-                        <h3>1. Smart Academic Planner</h3>
-                        <ul>
-                            <li>Class and clinical schedule organizer</li>
-                            <li>Task and assignment tracker</li>
-                            <li>Deadline reminders</li>
-                            <li>Examination countdowns</li>
-                            <li>Priority-based to-do lists</li>
-                        </ul>
-                    </div>
-                    <div class="feature-detail-card">
-                        <h3>2. Health and Wellness Monitoring</h3>
-                        <ul>
-                            <li>Water intake tracker</li>
-                            <li>Sleep monitoring</li>
-                            <li>Medication reminders</li>
-                            <li>Meal and nutrition logs</li>
-                            <li>Physical activity tracking</li>
-                        </ul>
-                    </div>
-                    <div class="feature-detail-card">
-                        <h3>3. Mental Health and Stress Support</h3>
-                        <ul>
-                            <li>Mood tracker</li>
-                            <li>Stress level check-ins</li>
-                            <li>Guided breathing and relaxation exercises</li>
-                            <li>Motivational support and wellness tips</li>
-                            <li>Journaling feature</li>
-                        </ul>
-                    </div>
-                    <div class="feature-detail-card">
-                        <h3>4. Daily Life Management Tools</h3>
-                        <ul>
-                            <li>Habit tracker</li>
-                            <li>Budget and expense tracker</li>
-                            <li>Personal notes and checklist organizer</li>
-                            <li>Emergency contacts and quick-access resources</li>
-                        </ul>
-                    </div>
-                    <div class="feature-detail-card">
-                        <h3>5. Student Support System</h3>
-                        <ul>
-                            <li>Peer support/community feature</li>
-                            <li>Academic encouragement tools</li>
-                            <li>Self-care recommendations based on stress indicators</li>
-                            <li>Personalized reminders and productivity insights</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- ABOUT PAGE -->
-    <div id="aboutPage" class="page">
-        <section class="about-page">
-            <div class="container">
-                <h1>About LifeCare</h1>
-                
-                <div class="about-section">
-                    <h2>What is LifeCare?</h2>
-                    <p>LifeCare: A Student Health & Life Management Companion is a comprehensive mobile application designed to help students manage their academic responsibilities, health, wellness, and daily routines in one place. Targeted particularly at nursing students and those in demanding academic programs, LifeCare provides tools to organize tasks, track health, monitor mental well-being, and offer emotional support. With its integrated platform, LifeCare empowers students to balance academic excellence with personal well-being.</p>
-                </div>
-
-                <div class="about-section">
-                    <h2>Mission</h2>
-                    <p>Our mission is to empower students to succeed academically, emotionally, and physically with LifeCare, an all-in-one digital companion. It helps students manage their academic workload, track physical and mental health, and maintain a balanced lifestyle through task management, wellness monitoring, emotional support, and self-care recommendations. Our goal is to enhance productivity, well-being, and academic success.</p>
-                </div>
-
-                <div class="about-section">
-                    <h2>Vision</h2>
-                    <p>We envision a future where students can effortlessly balance academic responsibilities, health, and personal life. LifeCare aims to be the leading tool that helps students manage tasks, prioritize self-care, and achieve their goals. Our vision is to build a community of students who are mentally healthy, physically active, and academically successful by providing the tools needed for success in both their studies and personal lives.</p>
-                </div>
-
-                <div class="about-section">
-                    <h2>Why LifeCare?</h2>
-                    <ul class="why-list">
-                        <li><strong>Comprehensive Solution:</strong> Integrates academic management, health tracking, and stress support into one platform.</li>
-                        <li><strong>Designed for Students:</strong> Tailored specifically for students in demanding programs like nursing.</li>
-                        <li><strong>Prevention and Wellness:</strong> Encourages healthy habits and provides self-care reminders and stress management tools.</li>
-                        <li><strong>All-in-One Platform:</strong> Combines task organizers, health monitoring, peer support, and budgeting in one place.</li>
-                        <li><strong>Balanced Lifestyle:</strong> Helps students maintain a healthy balance between academics, health, and personal life.</li>
-                        <li><strong>Supportive Community:</strong> Offers built-in peer support and motivational tools for emotional well-being.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- CONTACT PAGE -->
-    <div id="contactPage" class="page">
-        <section class="contact-page">
-            <div class="container">
-                <h1>Contact Us</h1>
-                
-                <div class="contact-section">
-                    <h2>Contact Information</h2>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <h3>Email</h3>
-                            <p><a href="mailto:lifecare000222@gmail.com">lifecare000222@gmail.com</a></p>
-                        </div>
-                        <div class="contact-item">
-                            <h3>Phone</h3>
-                            <p><a href="tel:09063088746">09063088746</a></p>
-                        </div>
-                        <div class="contact-item">
-                            <h3>Location</h3>
-                            <p>Quezon City, Philippines</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="contact-section">
-                    <h2>Send us a Message</h2>
-                    <form class="contact-form" onsubmit="handleContactForm(event)">
+                <div class="login-container">
+                    <h2>Login to LifeCare</h2>
+                    <form id="loginForm" onsubmit="handleLogin(event)">
                         <div class="form-group">
-                            <label for="contactName">Name:</label>
-                            <input type="text" id="contactName" name="contactName" required>
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
                         </div>
                         <div class="form-group">
-                            <label for="contactEmail">Email:</label>
-                            <input type="email" id="contactEmail" name="contactEmail" required>
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
                         </div>
                         <div class="form-group">
-                            <label for="contactMessage">Message:</label>
-                            <textarea id="contactMessage" name="contactMessage" rows="5" required></textarea>
+                            <label for="role">Role</label>
+                            <select id="role" name="role" required>
+                                <option value="">Select your role</option>
+                                <option value="Nursing Student">Nursing Student</option>
+                                <option value="Student">Student</option>
+                                <option value="Other Professional">Other Professional</option>
+                            </select>
                         </div>
-                        <button type="submit" class="submit-btn">Send Message</button>
+                        <div id="loginError" class="error-message"></div>
+                        <button type="submit" class="btn btn-primary btn-full">Login</button>
                     </form>
                 </div>
             </div>
         </section>
-    </div>
+    </section>
 
-    <!-- DASHBOARD PAGE -->
-    <div id="dashboardPage" class="page">
-        <div class="dashboard-container">
-            <!-- Sidebar Navigation -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h3>LifeCare</h3>
+    <!-- Features Page -->
+    <section id="features" class="page features-page">
+        <div class="container">
+            <h2 class="page-title">Features</h2>
+            <div class="features-detailed">
+                <div class="feature-detail">
+                    <h3>Smart Academic Planner</h3>
+                    <ul>
+                        <li>Class and clinical schedule organizer</li>
+                        <li>Task and assignment tracker</li>
+                        <li>Deadline reminders</li>
+                        <li>Examination countdowns</li>
+                        <li>Priority-based to-do lists</li>
+                    </ul>
                 </div>
-                <nav class="sidebar-nav">
-                    <a href="#" class="sidebar-link active" data-section="dashboard">Dashboard</a>
-                    <a href="#" class="sidebar-link" data-section="academic">Smart Academic Planner</a>
-                    <a href="#" class="sidebar-link" data-section="health">Health & Wellness</a>
-                    <a href="#" class="sidebar-link" data-section="mental">Mental Health & Stress</a>
-                    <a href="#" class="sidebar-link" data-section="daily">Daily Life Management</a>
-                    <a href="#" class="sidebar-link" data-section="support">Student Support System</a>
-                    <a href="#" class="sidebar-link" data-section="profile">Profile</a>
+                <div class="feature-detail">
+                    <h3>Health and Wellness Monitoring</h3>
+                    <ul>
+                        <li>Water intake tracker</li>
+                        <li>Sleep monitoring</li>
+                        <li>Medication reminders</li>
+                        <li>Meal and nutrition logs</li>
+                        <li>Physical activity tracking</li>
+                    </ul>
+                </div>
+                <div class="feature-detail">
+                    <h3>Mental Health and Stress Support</h3>
+                    <ul>
+                        <li>Mood tracker</li>
+                        <li>Stress level check-ins</li>
+                        <li>Guided breathing and relaxation exercises</li>
+                        <li>Motivational support and wellness tips</li>
+                        <li>Journaling feature</li>
+                    </ul>
+                </div>
+                <div class="feature-detail">
+                    <h3>Daily Life Management Tools</h3>
+                    <ul>
+                        <li>Habit tracker</li>
+                        <li>Budget and expense tracker</li>
+                        <li>Personal notes and checklist organizer</li>
+                        <li>Emergency contacts and quick-access resources</li>
+                    </ul>
+                </div>
+                <div class="feature-detail">
+                    <h3>Student Support System</h3>
+                    <ul>
+                        <li>Peer support/community feature</li>
+                        <li>Academic encouragement tools</li>
+                        <li>Self-care recommendations based on stress indicators</li>
+                        <li>Personalized reminders and productivity insights</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Page -->
+    <section id="about" class="page about-page">
+        <div class="container">
+            <h2 class="page-title">About LifeCare</h2>
+            
+            <div class="about-section">
+                <h3>What is LifeCare?</h3>
+                <p>LifeCare: A Student Health & Life Management Companion is a comprehensive mobile application designed to help students manage their academic responsibilities, health, wellness, and daily routines in one place. Targeted particularly at nursing students and those in demanding academic programs, LifeCare provides tools to organize tasks, track health, monitor mental well-being, and offer emotional support. With its integrated platform, LifeCare empowers students to balance academic excellence with personal well-being.</p>
+            </div>
+
+            <div class="about-section">
+                <h3>Mission</h3>
+                <p>Our mission is to empower students to succeed academically, emotionally, and physically with LifeCare, an all-in-one digital companion. It helps students manage their academic workload, track physical and mental health, and maintain a balanced lifestyle through task management, wellness monitoring, emotional support, and self-care recommendations. Our goal is to enhance productivity, well-being, and academic success.</p>
+            </div>
+
+            <div class="about-section">
+                <h3>Vision</h3>
+                <p>We envision a future where students can effortlessly balance academic responsibilities, health, and personal life. LifeCare aims to be the leading tool that helps students manage tasks, prioritize self-care, and achieve their goals. Our vision is to build a community of students who are mentally healthy, physically active, and academically successful by providing the tools needed for success in both their studies and personal lives.</p>
+            </div>
+
+            <div class="about-section">
+                <h3>Why LifeCare?</h3>
+                <ul class="why-list">
+                    <li>Comprehensive Solution: Integrates academic management, health tracking, and stress support into one platform.</li>
+                    <li>Designed for Students: Tailored specifically for students in demanding programs like nursing.</li>
+                    <li>Prevention and Wellness: Encourages healthy habits and provides self-care reminders and stress management tools.</li>
+                    <li>All-in-One Platform: Combines task organizers, health monitoring, peer support, and budgeting in one place.</li>
+                    <li>Balanced Lifestyle: Helps students maintain a healthy balance between academics, health, and personal life.</li>
+                    <li>Supportive Community: Offers built-in peer support and motivational tools for emotional well-being.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Page -->
+    <section id="contact" class="page contact-page">
+        <div class="container">
+            <h2 class="page-title">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <div class="contact-item">
+                        <h4>Email</h4>
+                        <p><a href="mailto:lifecare000222@gmail.com">lifecare000222@gmail.com</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <h4>Phone</h4>
+                        <p><a href="tel:+639063088746">09063088746</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <h4>Location</h4>
+                        <p>Quezon City, Philippines</p>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Send us a Message</h3>
+                    <form onsubmit="handleContactForm(event)">
+                        <div class="form-group">
+                            <label for="contactName">Name</label>
+                            <input type="text" id="contactName" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Email</label>
+                            <input type="email" id="contactEmail" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Page -->
+    <section id="dashboard" class="page dashboard-page">
+        <div class="dashboard-container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div class="header-left">
+                    <h1>LifeCare Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <span id="userGreeting" class="user-greeting">Hi, User</span>
+                    <span id="userRole" class="user-role"></span>
+                    <a href="#profile" onclick="navigateToDashboardPage('profile')" class="profile-link">Profile</a>
+                    <button onclick="logout()" class="btn btn-logout">Logout</button>
+                </div>
+            </div>
+
+            <!-- Sidebar Navigation -->
+            <div class="dashboard-sidebar" id="dashboardSidebar">
+                <nav class="dashboard-nav">
+                    <ul>
+                        <li><a href="#dashboard" onclick="navigateToDashboardPage('overview')" class="nav-link active">Dashboard</a></li>
+                        <li><a href="#dashboard" onclick="navigateToDashboardPage('planner')" class="nav-link">Academic Planner</a></li>
+                        <li><a href="#dashboard" onclick="navigateToDashboardPage('health')" class="nav-link">Health & Wellness</a></li>
+                        <li><a href="#dashboard" onclick="navigateToDashboardPage('mental')" class="nav-link">Mental Health</a></li>
+                        <li><a href="#dashboard" onclick="navigateToDashboardPage('daily')" class="nav-link">Daily Life</a></li>
+                        <li><a href="#dashboard" onclick="navigateToDashboardPage('support')" class="nav-link">Student Support</a></li>
+                        <li><a href="#dashboard" onclick="navigateToDashboardPage('profile')" class="nav-link">Profile</a></li>
+                    </ul>
                 </nav>
-            </aside>
+            </div>
 
-            <!-- Main Content -->
-            <main class="dashboard-content">
-                <!-- Header -->
-                <header class="dashboard-header">
-                    <h1>Dashboard</h1>
-                    <div class="user-info">
-                        <span id="userGreeting">Hi, User</span>
-                        <span id="userRole" class="user-role"></span>
-                        <button class="logout-btn" onclick="logout()">Logout</button>
-                    </div>
-                </header>
-
-                <!-- Dashboard Overview Section -->
-                <section id="dashboardSection" class="dashboard-section active">
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Overview Page -->
+                <div class="dashboard-page-content" id="overviewPage">
                     <h2>Dashboard Overview</h2>
-                    <div class="cards-grid">
-                        <div class="dashboard-card" onclick="navigateDashboard('academic')">
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card" onclick="navigateToDashboardPage('planner')">
                             <h3>Smart Academic Planner</h3>
-                            <p>Total Tasks: <span id="totalTasks">0</span></p>
-                            <p>Completed: <span id="completedTasks">0</span></p>
+                            <div class="card-stats">
+                                <p>Total Tasks: <span id="totalTasks">0</span></p>
+                                <p>Completed: <span id="completedTasks">0</span></p>
+                            </div>
                         </div>
-                        <div class="dashboard-card" onclick="navigateDashboard('health')">
+                        <div class="dashboard-card" onclick="navigateToDashboardPage('health')">
                             <h3>Health & Wellness</h3>
-                            <p>Water Intake: <span id="waterIntake">0</span>L</p>
-                            <p>Sleep Hours: <span id="sleepHours">0</span>h</p>
+                            <div class="card-stats">
+                                <p>Water Intake: <span id="waterIntake">0</span>L</p>
+                                <p>Sleep: <span id="sleepHours">0</span>hrs</p>
+                            </div>
                         </div>
-                        <div class="dashboard-card" onclick="navigateDashboard('daily')">
+                        <div class="dashboard-card" onclick="navigateToDashboardPage('mental')">
+                            <h3>Mental Health</h3>
+                            <div class="card-stats">
+                                <p>Today's Mood: <span id="todayMood">Not logged</span></p>
+                                <p>Stress Level: <span id="stressLevel">-</span></p>
+                            </div>
+                        </div>
+                        <div class="dashboard-card" onclick="navigateToDashboardPage('daily')">
                             <h3>Daily Life Management</h3>
-                            <p>Habits Tracked: <span id="habitsTracked">0</span></p>
-                            <p>Budget: ₱<span id="budget">5000</span></p>
+                            <div class="card-stats">
+                                <p>Habits Tracked: <span id="habitsTracked">0</span></p>
+                                <p>Budget: <span id="budgetInfo">0</span></p>
+                            </div>
                         </div>
-                        <div class="dashboard-card" onclick="navigateDashboard('mental')">
-                            <h3>Mental Health & Stress</h3>
-                            <p>Mood Entries: <span id="moodEntries">0</span></p>
-                            <p>Avg Stress: <span id="avgStress">0</span>/10</p>
+                        <div class="dashboard-card" onclick="navigateToDashboardPage('support')">
+                            <h3>Student Support</h3>
+                            <div class="card-stats">
+                                <p>Community Messages: <span id="communityMessages">0</span></p>
+                            </div>
                         </div>
-                        <div class="dashboard-card" onclick="navigateDashboard('support')">
-                            <h3>Student Support System</h3>
-                            <p>Community Posts: <span id="communityPosts">0</span></p>
-                            <p>Support Messages: <span id="supportMessages">0</span></p>
-                        </div>
-                        <div class="dashboard-card" onclick="navigateDashboard('profile')">
-                            <h3>Profile Settings</h3>
-                            <p>View and edit your profile</p>
-                            <p>Manage preferences</p>
+                        <div class="dashboard-card" onclick="navigateToDashboardPage('profile')">
+                            <h3>Profile</h3>
+                            <div class="card-stats">
+                                <p>Account Settings</p>
+                                <p>Update Information</p>
+                            </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- Academic Planner Section -->
-                <section id="academicSection" class="dashboard-section">
+                <!-- Academic Planner Page -->
+                <div class="dashboard-page-content" id="plannerPage" style="display: none;">
                     <h2>Smart Academic Planner</h2>
-                    <div class="section-content">
+                    <div class="form-section">
+                        <h3>Add New Task</h3>
+                        <form onsubmit="addTask(event)">
+                            <div class="form-group">
+                                <label for="taskTitle">Task Title</label>
+                                <input type="text" id="taskTitle" placeholder="Enter task title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskDueDate">Due Date</label>
+                                <input type="date" id="taskDueDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskPriority">Priority</label>
+                                <select id="taskPriority">
+                                    <option value="Low">Low</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Task</button>
+                        </form>
+                    </div>
+
+                    <div class="tasks-list">
+                        <h3>Your Tasks</h3>
+                        <div id="tasksList"></div>
+                    </div>
+                </div>
+
+                <!-- Health & Wellness Page -->
+                <div class="dashboard-page-content" id="healthPage" style="display: none;">
+                    <h2>Health and Wellness Monitoring</h2>
+                    <div class="form-section">
+                        <h3>Log Health Metrics</h3>
+                        <form onsubmit="addHealthLog(event)">
+                            <div class="form-group">
+                                <label for="waterIntakeInput">Water Intake (Liters)</label>
+                                <input type="number" id="waterIntakeInput" step="0.5" min="0" placeholder="e.g., 1.5">
+                            </div>
+                            <div class="form-group">
+                                <label for="sleepInput">Sleep Hours</label>
+                                <input type="number" id="sleepInput" step="0.5" min="0" max="24" placeholder="e.g., 8">
+                            </div>
+                            <div class="form-group">
+                                <label for="activityInput">Physical Activity (minutes)</label>
+                                <input type="number" id="activityInput" min="0" placeholder="e.g., 30">
+                            </div>
+                            <div class="form-group">
+                                <label for="mealInput">Meal Log</label>
+                                <input type="text" id="mealInput" placeholder="What did you eat?">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Log Health Data</button>
+                        </form>
+                    </div>
+
+                    <div class="health-history">
+                        <h3>Health History</h3>
+                        <div id="healthHistoryList"></div>
+                    </div>
+                </div>
+
+                <!-- Mental Health Page -->
+                <div class="dashboard-page-content" id="mentalPage" style="display: none;">
+                    <h2>Mental Health and Stress Support</h2>
+                    <div class="form-section">
+                        <h3>Track Your Mental Health</h3>
+                        <form onsubmit="addMentalLog(event)">
+                            <div class="form-group">
+                                <label for="moodSelect">Today's Mood</label>
+                                <select id="moodSelect" required>
+                                    <option value="">Select mood</option>
+                                    <option value="Very Happy">Very Happy</option>
+                                    <option value="Happy">Happy</option>
+                                    <option value="Neutral">Neutral</option>
+                                    <option value="Sad">Sad</option>
+                                    <option value="Very Sad">Very Sad</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="stressInput">Stress Level (1-10)</label>
+                                <input type="range" id="stressInput" min="1" max="10" value="5">
+                                <span id="stressDisplay">5</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="journalEntry">Journal Entry</label>
+                                <textarea id="journalEntry" placeholder="Write about your day..." rows="4"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Mental Health Log</button>
+                        </form>
+                    </div>
+
+                    <div class="mental-support">
+                        <h3>Breathing Exercise</h3>
+                        <button class="btn btn-secondary" onclick="startBreathingExercise()">Start 5-Minute Breathing Exercise</button>
+                        <div id="breathingExercise" style="display: none; margin-top: 20px;">
+                            <div class="breathing-circle"></div>
+                            <p id="breathingText">Breathe in...</p>
+                        </div>
+                    </div>
+
+                    <div class="mental-history">
+                        <h3>Mental Health History</h3>
+                        <div id="mentalHistoryList"></div>
+                    </div>
+                </div>
+
+                <!-- Daily Life Page -->
+                <div class="dashboard-page-content" id="dailyPage" style="display: none;">
+                    <h2>Daily Life Management Tools</h2>
+                    
+                    <div class="form-section">
+                        <h3>Habit Tracker</h3>
+                        <form onsubmit="addHabit(event)">
+                            <div class="form-group">
+                                <label for="habitName">Habit Name</label>
+                                <input type="text" id="habitName" placeholder="e.g., Morning Exercise" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Habit</button>
+                        </form>
+                        <div id="habitsList" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Budget Tracker</h3>
+                        <form onsubmit="addExpense(event)">
+                            <div class="form-group">
+                                <label for="expenseCategory">Category</label>
+                                <input type="text" id="expenseCategory" placeholder="e.g., Food" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expenseAmount">Amount</label>
+                                <input type="number" id="expenseAmount" step="0.01" min="0" placeholder="e.g., 500" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Expense</button>
+                        </form>
+                        <div id="expensesList" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Personal Notes</h3>
+                        <form onsubmit="addNote(event)">
+                            <div class="form-group">
+                                <label for="noteContent">Note</label>
+                                <textarea id="noteContent" placeholder="Write your note..." rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Note</button>
+                        </form>
+                        <div id="notesList" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Emergency Contacts</h3>
+                        <form onsubmit="addEmergencyContact(event)">
+                            <div class="form-group">
+                                <label for="contactPersonName">Contact Name</label>
+                                <input type="text" id="contactPersonName" placeholder="e.g., Mom" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhone">Phone Number</label>
+                                <input type="tel" id="contactPhone" placeholder="e.g., 09123456789" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Contact</button>
+                        </form>
+                        <div id="emergencyContactsList" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+
+                <!-- Student Support Page -->
+                <div class="dashboard-page-content" id="supportPage" style="display: none;">
+                    <h2>Student Support System</h2>
+                    
+                    <div class="support-section">
+                        <h3>Community Chat</h3>
+                        <div id="chatBox" style="border: 1px solid #ddd; height: 300px; overflow-y: auto; padding: 15px; margin-bottom: 15px; background-color: #f9f9f9;">
+                            <p style="color: #888;">No messages yet. Start a conversation!</p>
+                        </div>
+                        <form onsubmit="sendChatMessage(event)">
+                            <div class="form-group">
+                                <input type="text" id="chatMessage" placeholder="Type your message..." required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                        </form>
+                    </div>
+
+                    <div class="support-section">
+                        <h3>Motivational Tips</h3>
+                        <button class="btn btn-secondary" onclick="showMotivationalTip()">Get Motivational Tip</button>
+                        <div id="motivationalTipBox" style="margin-top: 15px; padding: 15px; background-color: #e8f5e9; border-left: 4px solid #4caf50; display: none;">
+                            <p id="motivationalTip"></p>
+                        </div>
+                    </div>
+
+                    <div class="support-section">
+                        <h3>Self-Care Recommendations</h3>
+                        <button class="btn btn-secondary" onclick="getSelfCareRecommendations()">Get Recommendations</button>
+                        <div id="recommendationsBox" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div class="dashboard-page-content" id="profilePage" style="display: none;">
+                    <h2>Profile Management</h2>
+                    <form onsubmit="updateProfile(event)" class="profile-form">
                         <div class="form-group">
-                            <label for="className">Class Name:</label>
-                            <input type="text" id="className" placeholder="e.g., Biology 101">
+                            <label for="profileNickname">Nickname</label>
+                            <input type="text" id="profileNickname" placeholder="Enter your nickname" required>
                         </div>
                         <div class="form-group">
-                            <label for="taskName">Task/Assignment:</label>
-                            <input type="text" id="taskName" placeholder="Enter task name">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" id="profileEmail" placeholder="Enter your email" required>
                         </div>
                         <div class="form-group">
-                            <label for="dueDate">Due Date:</label>
-                            <input type="date" id="dueDate">
-                        </div>
-                        <div class="form-group">
-                            <label for="priority">Priority:</label>
-                            <select id="priority">
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="High">High</option>
+                            <label for="profileRole">Role</label>
+                            <select id="profileRole" required>
+                                <option value="Nursing Student">Nursing Student</option>
+                                <option value="Student">Student</option>
+                                <option value="Other Professional">Other Professional</option>
                             </select>
                         </div>
-                        <button class="add-btn" onclick="addTask()">Add Task</button>
-
-                        <div class="items-list">
-                            <h3>Your Tasks</h3>
-                            <div id="tasksList"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Health & Wellness Section -->
-                <section id="healthSection" class="dashboard-section">
-                    <h2>Health & Wellness Monitoring</h2>
-                    <div class="section-content">
-                        <div class="health-subsection">
-                            <h3>Water Intake</h3>
-                            <div class="form-group">
-                                <label for="waterAmount">Amount (Liters):</label>
-                                <input type="number" id="waterAmount" step="0.1" placeholder="0.5">
-                            </div>
-                            <button class="add-btn" onclick="addWaterIntake()">Log Water Intake</button>
-                            <p>Today's Total: <strong id="waterTotal">0</strong>L</p>
-                        </div>
-
-                        <div class="health-subsection">
-                            <h3>Sleep Monitoring</h3>
-                            <div class="form-group">
-                                <label for="sleepAmount">Hours Slept:</label>
-                                <input type="number" id="sleepAmount" step="0.5" placeholder="8">
-                            </div>
-                            <button class="add-btn" onclick="addSleepLog()">Log Sleep</button>
-                            <p>Average Sleep: <strong id="sleepAvg">0</strong> hours</p>
-                        </div>
-
-                        <div class="health-subsection">
-                            <h3>Physical Activity</h3>
-                            <div class="form-group">
-                                <label for="activity">Activity:</label>
-                                <input type="text" id="activity" placeholder="e.g., Running, Gym">
-                            </div>
-                            <div class="form-group">
-                                <label for="activityDuration">Duration (minutes):</label>
-                                <input type="number" id="activityDuration" placeholder="30">
-                            </div>
-                            <button class="add-btn" onclick="addActivity()">Log Activity</button>
-                        </div>
-
-                        <div class="health-subsection">
-                            <h3>Meal & Nutrition</h3>
-                            <div class="form-group">
-                                <label for="meal">Meal/Food:</label>
-                                <input type="text" id="meal" placeholder="e.g., Breakfast, Lunch">
-                            </div>
-                            <div class="form-group">
-                                <label for="nutrition">Nutrition Notes:</label>
-                                <textarea id="nutrition" rows="3" placeholder="Notes about meal"></textarea>
-                            </div>
-                            <button class="add-btn" onclick="addMeal()">Log Meal</button>
-                        </div>
-
-                        <div class="health-subsection">
-                            <h3>Medication Reminders</h3>
-                            <div class="form-group">
-                                <label for="medication">Medication Name:</label>
-                                <input type="text" id="medication" placeholder="e.g., Vitamin D">
-                            </div>
-                            <div class="form-group">
-                                <label for="medTime">Time to Take:</label>
-                                <input type="time" id="medTime">
-                            </div>
-                            <button class="add-btn" onclick="addMedication()">Set Reminder</button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Mental Health & Stress Section -->
-                <section id="mentalSection" class="dashboard-section">
-                    <h2>Mental Health & Stress Support</h2>
-                    <div class="section-content">
-                        <div class="mental-subsection">
-                            <h3>Mood Tracker</h3>
-                            <div class="mood-selector">
-                                <button class="mood-btn" onclick="logMood('😊 Happy')">😊 Happy</button>
-                                <button class="mood-btn" onclick="logMood('😐 Neutral')">😐 Neutral</button>
-                                <button class="mood-btn" onclick="logMood('😞 Sad')">😞 Sad</button>
-                                <button class="mood-btn" onclick="logMood('😤 Stressed')">😤 Stressed</button>
-                                <button class="mood-btn" onclick="logMood('😴 Tired')">😴 Tired</button>
-                            </div>
-                            <p>Latest Mood: <strong id="latestMood">-</strong></p>
-                        </div>
-
-                        <div class="mental-subsection">
-                            <h3>Stress Level Check-in</h3>
-                            <div class="form-group">
-                                <label for="stressLevel">Stress Level (1-10):</label>
-                                <input type="range" id="stressLevel" min="1" max="10" value="5">
-                                <p id="stressValue">5/10</p>
-                            </div>
-                            <button class="add-btn" onclick="logStress()">Log Stress Level</button>
-                        </div>
-
-                        <div class="mental-subsection">
-                            <h3>Guided Breathing Exercise</h3>
-                            <p>Follow the animation to calm down:</p>
-                            <div class="breathing-circle"></div>
-                            <p id="breathingText">Inhale...</p>
-                            <button class="add-btn" onclick="startBreathingExercise()">Start Exercise</button>
-                        </div>
-
-                        <div class="mental-subsection">
-                            <h3>Motivational Tips & Wellness</h3>
-                            <button class="add-btn" onclick="generateMotivationalTip()">Get Motivational Tip</button>
-                            <p id="motivationalTip" style="margin-top: 15px; padding: 10px; background: #e8f5e9; border-radius: 5px;"></p>
-                        </div>
-
-                        <div class="mental-subsection">
-                            <h3>Journal Entry</h3>
-                            <div class="form-group">
-                                <label for="journalEntry">Write your thoughts:</label>
-                                <textarea id="journalEntry" rows="5" placeholder="Express your feelings..."></textarea>
-                            </div>
-                            <button class="add-btn" onclick="saveJournalEntry()">Save Journal Entry</button>
-                            <div id="journalHistory"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Daily Life Management Section -->
-                <section id="dailySection" class="dashboard-section">
-                    <h2>Daily Life Management Tools</h2>
-                    <div class="section-content">
-                        <div class="daily-subsection">
-                            <h3>Habit Tracker</h3>
-                            <div class="form-group">
-                                <label for="habitName">Habit Name:</label>
-                                <input type="text" id="habitName" placeholder="e.g., Morning Exercise">
-                            </div>
-                            <button class="add-btn" onclick="addHabit()">Add Habit</button>
-                            <div id="habitsList"></div>
-                        </div>
-
-                        <div class="daily-subsection">
-                            <h3>Personal Notes</h3>
-                            <div class="form-group">
-                                <label for="noteTitle">Note Title:</label>
-                                <input type="text" id="noteTitle" placeholder="Title">
-                            </div>
-                            <div class="form-group">
-                                <label for="noteContent">Note:</label>
-                                <textarea id="noteContent" rows="4" placeholder="Write your note..."></textarea>
-                            </div>
-                            <button class="add-btn" onclick="addNote()">Add Note</button>
-                            <div id="notesList"></div>
-                        </div>
-
-                        <div class="daily-subsection">
-                            <h3>Budget & Expense Tracker</h3>
-                            <div class="form-group">
-                                <label for="expenseItem">Item:</label>
-                                <input type="text" id="expenseItem" placeholder="What did you spend on?">
-                            </div>
-                            <div class="form-group">
-                                <label for="expenseAmount">Amount (₱):</label>
-                                <input type="number" id="expenseAmount" placeholder="0.00">
-                            </div>
-                            <button class="add-btn" onclick="addExpense()">Log Expense</button>
-                            <p>Total Expenses: ₱<span id="totalExpenses">0</span></p>
-                            <p>Remaining Budget: ₱<span id="remainingBudget">5000</span></p>
-                            <div id="expensesList"></div>
-                        </div>
-
-                        <div class="daily-subsection">
-                            <h3>Emergency Contacts</h3>
-                            <div class="form-group">
-                                <label for="contactPerson">Contact Name:</label>
-                                <input type="text" id="contactPerson" placeholder="Full Name">
-                            </div>
-                            <div class="form-group">
-                                <label for="contactPhone">Phone:</label>
-                                <input type="tel" id="contactPhone" placeholder="Phone Number">
-                            </div>
-                            <button class="add-btn" onclick="addEmergencyContact()">Add Contact</button>
-                            <div id="emergencyContactsList"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Student Support System Section -->
-                <section id="supportSection" class="dashboard-section">
-                    <h2>Student Support System</h2>
-                    <div class="section-content">
-                        <div class="support-subsection">
-                            <h3>Peer Support Chat</h3>
-                            <div id="chatBox" style="border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; background: #f9f9f9;"></div>
-                            <div class="form-group">
-                                <label for="chatMessage">Message:</label>
-                                <textarea id="chatMessage" rows="2" placeholder="Share with peers..."></textarea>
-                            </div>
-                            <button class="add-btn" onclick="sendChatMessage()">Send Message</button>
-                        </div>
-
-                        <div class="support-subsection">
-                            <h3>Academic Encouragement</h3>
-                            <button class="add-btn" onclick="getAcademicEncouragement()">Get Encouragement</button>
-                            <p id="encouragementMessage" style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 5px;"></p>
-                        </div>
-
-                        <div class="support-subsection">
-                            <h3>Self-Care Recommendations</h3>
-                            <p id="selfCareRec" style="margin-top: 10px; padding: 10px; background: #fff3e0; border-radius: 5px;">
-                                <strong>Recommendation based on your stress level:</strong>
-                            </p>
-                            <button class="add-btn" onclick="generateSelfCareRec()">Get Recommendation</button>
-                        </div>
-
-                        <div class="support-subsection">
-                            <h3>Community Board</h3>
-                            <div class="form-group">
-                                <label for="communityPost">Post:</label>
-                                <textarea id="communityPost" rows="3" placeholder="Share your thoughts with the community..."></textarea>
-                            </div>
-                            <button class="add-btn" onclick="postToCommunity()">Post</button>
-                            <div id="communityBoard" style="margin-top: 20px;"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Profile Section -->
-                <section id="profileSection" class="dashboard-section">
-                    <h2>Profile Settings</h2>
-                    <div class="section-content">
                         <div class="form-group">
-                            <label for="profileName">Full Name:</label>
-                            <input type="text" id="profileName" placeholder="Your full name">
+                            <label for="profilePhone">Phone Number</label>
+                            <input type="tel" id="profilePhone" placeholder="Enter your phone number">
                         </div>
-                        <div class="form-group">
-                            <label for="profileNickname">Nickname:</label>
-                            <input type="text" id="profileNickname" placeholder="Your nickname">
-                        </div>
-                        <div class="form-group">
-                            <label for="profileEmail">Email:</label>
-                            <input type="email" id="profileEmail" placeholder="Your email" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="profileRole">Role:</label>
-                            <input type="text" id="profileRole" placeholder="Your role" readonly>
-                        </div>
-                        <button class="add-btn" onclick="saveProfile()">Save Changes</button>
-                    </div>
-                </section>
-            </main>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
     <script src="script.js"></script>
 </body>
