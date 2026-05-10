@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeCare - Student Health & Life Management Companion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-heart"></i>
+                <span>LifeCare</span>
+            </div>
+            
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+                <li><a href="#features" class="nav-link" data-section="features">Features</a></li>
+                <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+                <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
+                <li id="logoutItem" style="display: none;">
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <!-- Hero Section -->
+            <div class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">LifeCare</h1>
+                    <p class="hero-tagline">Stay healthy. Stay organized. Stay prepared. Stay in control.</p>
+                    <button class="cta-button" id="getStartedBtn">Get Started</button>
+                </div>
+            </div>
+
+            <!-- What is LifeCare Section -->
+            <div class="what-is-lifecare">
+                <div class="container">
+                    <h2>What is LifeCare?</h2>
+                    <p>LifeCare is an all-in-one student companion that helps students organize their schedules, track their health, manage stress, and stay productive every day.</p>
+                </div>
+            </div>
+
+            <!-- Core Features Section -->
+            <section id="features" class="core-features">
+                <div class="container">
+                    <h2>Core Features of LifeCare</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3>Smart Academic Planner</h3>
+                            <p>Organize your class and clinical schedules, track tasks and assignments, set deadline reminders, keep an eye on examination countdowns, and manage your workload with priority-based to-do lists.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-heart-pulse"></i>
+                            </div>
+                            <h3>Health and Wellness Monitoring</h3>
+                            <p>Track your water intake, monitor your sleep patterns, set medication reminders, log your meals and nutrition, and stay active with physical activity tracking.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3>Mental Health and Stress Support</h3>
+                            <p>Track your mood, check your stress levels, practice guided breathing and relaxation exercises, get motivational support and wellness tips, and reflect on your day with a journaling feature.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-list-check"></i>
+                            </div>
+                            <h3>Daily Life Management Tools</h3>
+                            <p>Stay on track with a habit tracker, manage your budget and expenses, keep personal notes and to-do lists, and store emergency contacts and quick-access resources.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3>Student Support System</h3>
+                            <p>Connect with peer support through the community feature, receive academic encouragement, get self-care recommendations based on stress levels, and use personalized reminders and productivity insights to optimize your day.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="about">
+                <div class="container">
+                    <h2>About LifeCare</h2>
+                    
+                    <div class="about-content">
+                        <h3>What is LifeCare?</h3>
+                        <p>LifeCare: A Student Health & Life Management Companion is a comprehensive mobile application designed to help students manage their academic responsibilities, health, wellness, and daily routines in one place. Targeted particularly at nursing students and those in demanding academic programs, LifeCare provides tools to organize tasks, track health, monitor mental well-being, and offer emotional support. With its integrated platform, LifeCare empowers students to balance academic excellence with personal well-being.</p>
+
+                        <h3>Mission</h3>
+                        <p>Our mission is to empower students to succeed academically, emotionally, and physically with LifeCare, an all-in-one digital companion. It helps students manage their academic workload, track physical and mental health, and maintain a balanced lifestyle through task management, wellness monitoring, emotional support, and self-care recommendations. Our goal is to enhance productivity, well-being, and academic success.</p>
+
+                        <h3>Vision</h3>
+                        <p>We envision a future where students can effortlessly balance academic responsibilities, health, and personal life. LifeCare aims to be the leading tool that helps students manage tasks, prioritize self-care, and achieve their goals. Our vision is to build a community of students who are mentally healthy, physically active, and academically successful by providing the tools needed for success in both their studies and personal lives.</p>
+
+                        <h3>Why LifeCare?</h3>
+                        <ul class="why-list">
+                            <li><strong>Comprehensive Solution:</strong> Integrates academic management, health tracking, and stress support into one platform.</li>
+                            <li><strong>Designed for Students:</strong> Tailored specifically for students in demanding programs like nursing.</li>
+                            <li><strong>Prevention and Wellness:</strong> Encourages healthy habits and provides self-care reminders and stress management tools.</li>
+                            <li><strong>All-in-One Platform:</strong> Combines task organizers, health monitoring, peer support, and budgeting in one place.</li>
+                            <li><strong>Balanced Lifestyle:</strong> Helps students maintain a healthy balance between academics, health, and personal life.</li>
+                            <li><strong>Supportive Community:</strong> Offers built-in peer support and motivational tools for emotional well-being.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="contact">
+                <div class="container">
+                    <h2>Contact Us</h2>
+                    <div class="contact-content">
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h3>Email</h3>
+                                    <p><a href="mailto:lifecare000222@gmail.com">lifecare000222@gmail.com</a></p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <h3>Phone</h3>
+                                    <p><a href="tel:09063088746">09063088746</a></p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <h3>Location</h3>
+                                    <p>Quezon City, Philippines</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Login Section -->
+        <section id="login" class="section login-section">
+            <div class="login-container">
+                <div class="login-box">
+                    <h2>Welcome to LifeCare</h2>
+                    <p>Sign in to your account</p>
+                    
+                    <form id="loginForm" class="login-form">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role">Select Your Role</label>
+                            <select id="role" name="role" required>
+                                <option value="">Choose a role</option>
+                                <option value="Nursing Student">Nursing Student</option>
+                                <option value="Student">Student</option>
+                                <option value="Other Professional">Other Professional</option>
+                            </select>
+                        </div>
+
+                        <div id="loginError" class="error-message" style="display: none;">
+                            Invalid login credentials!
+                        </div>
+
+                        <button type="submit" class="login-button">Login</button>
+                    </form>
+
+                    <button class="back-button" id="backBtn">← Back to Home</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section">
+            <div class="dashboard-wrapper">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Menu</h3>
+                        <button class="close-sidebar" id="closeSidebar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="sidebar-link active" data-tab="overview">
+                            <i class="fas fa-th-large"></i> Dashboard Overview
+                        </a></li>
+                        <li><a href="#" class="sidebar-link" data-tab="academic">
+                            <i class="fas fa-calendar-alt"></i> Smart Academic Planner
+                        </a></li>
+                        <li><a href="#" class="sidebar-link" data-tab="health">
+                            <i class="fas fa-heart-pulse"></i> Health & Wellness
+                        </a></li>
+                        <li><a href="#" class="sidebar-link" data-tab="mental">
+                            <i class="fas fa-brain"></i> Mental Health
+                        </a></li>
+                        <li><a href="#" class="sidebar-link" data-tab="daily">
+                            <i class="fas fa-list-check"></i> Daily Life Management
+                        </a></li>
+                        <li><a href="#" class="sidebar-link" data-tab="support">
+                            <i class="fas fa-users"></i> Student Support
+                        </a></li>
+                        <li><a href="#" class="sidebar-link" data-tab="profile">
+                            <i class="fas fa-user"></i> Profile
+                        </a></li>
+                    </ul>
+                </aside>
+
+                <!-- Main Dashboard Content -->
+                <div class="dashboard-main">
+                    <!-- Header -->
+                    <header class="dashboard-header">
+                        <button class="menu-toggle" id="menuToggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="header-right">
+                            <div class="user-info">
+                                <span id="userGreeting">Hi, User</span>
+                                <span id="userRole" class="user-role">(Student)</span>
+                            </div>
+                            <div class="user-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Dashboard Content -->
+                    <div class="dashboard-content">
+                        <!-- Overview Tab -->
+                        <div id="overview-tab" class="tab-content active">
+                            <h2>Dashboard Overview</h2>
+                            <div class="dashboard-grid">
+                                <div class="dashboard-card" data-card="academic">
+                                    <div class="card-header">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <h3>Smart Academic Planner</h3>
+                                    </div>
+                                    <div class="card-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Total Tasks</span>
+                                            <span class="stat-value" id="totalTasks">0</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Completed</span>
+                                            <span class="stat-value" id="completedTasks">0</span>
+                                        </div>
+                                    </div>
+                                    <button class="card-button">View Details →</button>
+                                </div>
+
+                                <div class="dashboard-card" data-card="health">
+                                    <div class="card-header">
+                                        <i class="fas fa-heart-pulse"></i>
+                                        <h3>Health & Wellness</h3>
+                                    </div>
+                                    <div class="card-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Water Intake</span>
+                                            <span class="stat-value" id="waterIntake">0L</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Sleep Hours</span>
+                                            <span class="stat-value" id="sleepHours">0h</span>
+                                        </div>
+                                    </div>
+                                    <button class="card-button">View Details →</button>
+                                </div>
+
+                                <div class="dashboard-card" data-card="tasks">
+                                    <div class="card-header">
+                                        <i class="fas fa-tasks"></i>
+                                        <h3>Task Management</h3>
+                                    </div>
+                                    <div class="card-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Pending Tasks</span>
+                                            <span class="stat-value" id="pendingTasks">0</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Priority Tasks</span>
+                                            <span class="stat-value" id="priorityTasks">0</span>
+                                        </div>
+                                    </div>
+                                    <button class="card-button">View Details →</button>
+                                </div>
+
+                                <div class="dashboard-card" data-card="budget">
+                                    <div class="card-header">
+                                        <i class="fas fa-wallet"></i>
+                                        <h3>Budget & Expenses</h3>
+                                    </div>
+                                    <div class="card-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Budget Remaining</span>
+                                            <span class="stat-value" id="budgetRemaining">₱5,000</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Total Expenses</span>
+                                            <span class="stat-value" id="totalExpenses">₱0</span>
+                                        </div>
+                                    </div>
+                                    <button class="card-button">View Details →</button>
+                                </div>
+
+                                <div class="dashboard-card" data-card="mental">
+                                    <div class="card-header">
+                                        <i class="fas fa-brain"></i>
+                                        <h3>Mental Health</h3>
+                                    </div>
+                                    <div class="card-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Current Mood</span>
+                                            <span class="stat-value" id="currentMood">-</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Stress Level</span>
+                                            <span class="stat-value" id="stressLevel">-</span>
+                                        </div>
+                                    </div>
+                                    <button class="card-button">View Details →</button>
+                                </div>
+
+                                <div class="dashboard-card" data-card="schedule">
+                                    <div class="card-header">
+                                        <i class="fas fa-clock"></i>
+                                        <h3>Scheduled Duties</h3>
+                                    </div>
+                                    <div class="card-stats">
+                                        <div class="stat">
+                                            <span class="stat-label">Today's Shifts</span>
+                                            <span class="stat-value" id="todayShifts">0</span>
+                                        </div>
+                                        <div class="stat">
+                                            <span class="stat-label">Upcoming Events</span>
+                                            <span class="stat-value" id="upcomingEvents">0</span>
+                                        </div>
+                                    </div>
+                                    <button class="card-button">View Details →</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Academic Tab -->
+                        <div id="academic-tab" class="tab-content">
+                            <h2>Smart Academic Planner</h2>
+                            <div class="feature-section">
+                                <div class="section-header">
+                                    <h3>Your Classes & Tasks</h3>
+                                    <button class="add-button" id="addClassBtn">
+                                        <i class="fas fa-plus"></i> Add Class
+                                    </button>
+                                </div>
+                                <div id="classesList" class="items-list">
+                                    <p class="empty-message">No classes added yet. Click "Add Class" to get started.</p>
+                                </div>
+
+                                <div class="section-header" style="margin-top: 2rem;">
+                                    <h3>Your Tasks & Assignments</h3>
+                                    <button class="add-button" id="addTaskBtn">
+                                        <i class="fas fa-plus"></i> Add Task
+                                    </button>
+                                </div>
+                                <div id="tasksList" class="items-list">
+                                    <p class="empty-message">No tasks added yet. Click "Add Task" to get started.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Health Tab -->
+                        <div id="health-tab" class="tab-content">
+                            <h2>Health & Wellness Monitoring</h2>
+                            <div class="feature-section">
+                                <div class="health-grid">
+                                    <div class="health-card">
+                                        <h3><i class="fas fa-droplet"></i> Water Intake</h3>
+                                        <div class="input-group">
+                                            <input type="number" id="waterInput" placeholder="Liters" min="0" step="0.1">
+                                            <button id="addWaterBtn" class="add-button">Log</button>
+                                        </div>
+                                        <div id="waterHistory" class="history-list"></div>
+                                    </div>
+
+                                    <div class="health-card">
+                                        <h3><i class="fas fa-bed"></i> Sleep Monitoring</h3>
+                                        <div class="input-group">
+                                            <input type="number" id="sleepInput" placeholder="Hours" min="0" max="24" step="0.5">
+                                            <button id="addSleepBtn" class="add-button">Log</button>
+                                        </div>
+                                        <div id="sleepHistory" class="history-list"></div>
+                                    </div>
+
+                                    <div class="health-card">
+                                        <h3><i class="fas fa-pills"></i> Medication Reminders</h3>
+                                        <div class="input-group">
+                                            <input type="text" id="medicationInput" placeholder="Medication name">
+                                            <button id="addMedicationBtn" class="add-button">Add</button>
+                                        </div>
+                                        <div id="medicationList" class="items-list"></div>
+                                    </div>
+
+                                    <div class="health-card">
+                                        <h3><i class="fas fa-utensils"></i> Nutrition Logs</h3>
+                                        <div class="input-group">
+                                            <input type="text" id="mealInput" placeholder="Meal details">
+                                            <button id="addMealBtn" class="add-button">Log</button>
+                                        </div>
+                                        <div id="mealList" class="items-list"></div>
+                                    </div>
+
+                                    <div class="health-card">
+                                        <h3><i class="fas fa-person-running"></i> Physical Activity</h3>
+                                        <div class="input-group">
+                                            <input type="text" id="activityInput" placeholder="Activity">
+                                            <button id="addActivityBtn" class="add-button">Log</button>
+                                        </div>
+                                        <div id="activityList" class="items-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mental Health Tab -->
+                        <div id="mental-tab" class="tab-content">
+                            <h2>Mental Health & Stress Support</h2>
+                            <div class="feature-section">
+                                <div class="mental-grid">
+                                    <div class="mental-card">
+                                        <h3><i class="fas fa-smile"></i> Mood Tracker</h3>
+                                        <div class="mood-selector">
+                                            <button class="mood-btn" data-mood="😢">😢 Sad</button>
+                                            <button class="mood-btn" data-mood="😐">😐 Neutral</button>
+                                            <button class="mood-btn" data-mood="🙂">🙂 Good</button>
+                                            <button class="mood-btn" data-mood="😊">😊 Happy</button>
+                                            <button class="mood-btn" data-mood="😍">😍 Excited</button>
+                                        </div>
+                                        <div id="moodHistory" class="history-list" style="margin-top: 1rem;"></div>
+                                    </div>
+
+                                    <div class="mental-card">
+                                        <h3><i class="fas fa-gauge"></i> Stress Level Check-in</h3>
+                                        <div class="stress-input">
+                                            <input type="range" id="stressSlider" min="1" max="10" value="5">
+                                            <span id="stressValue">5/10</span>
+                                        </div>
+                                        <button id="logStressBtn" class="add-button">Log Stress Level</button>
+                                        <div id="stressHistory" class="history-list" style="margin-top: 1rem;"></div>
+                                    </div>
+
+                                    <div class="mental-card">
+                                        <h3><i class="fas fa-wind"></i> Breathing Exercises</h3>
+                                        <button class="exercise-btn" id="breathingBtn">
+                                            <i class="fas fa-play"></i> Start 5-Minute Breathing Exercise
+                                        </button>
+                                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Take a break and practice guided breathing to reduce stress and anxiety.</p>
+                                    </div>
+
+                                    <div class="mental-card">
+                                        <h3><i class="fas fa-pen"></i> Journal Entry</h3>
+                                        <textarea id="journalEntry" placeholder="Write your thoughts here..." style="width: 100%; height: 120px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-family: Roboto;"></textarea>
+                                        <button id="saveJournalBtn" class="add-button" style="margin-top: 0.5rem;">Save Entry</button>
+                                        <div id="journalList" class="items-list" style="margin-top: 1rem;"></div>
+                                    </div>
+
+                                    <div class="mental-card">
+                                        <h3><i class="fas fa-lightbulb"></i> Motivational Tips</h3>
+                                        <button class="tip-btn" id="getTipBtn">Get Motivation</button>
+                                        <p id="motivationalTip" style="margin-top: 1rem; font-style: italic; color: #4CAF50;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Life Tab -->
+                        <div id="daily-tab" class="tab-content">
+                            <h2>Daily Life Management Tools</h2>
+                            <div class="feature-section">
+                                <div class="daily-grid">
+                                    <div class="daily-card">
+                                        <h3><i class="fas fa-check-circle"></i> Habit Tracker</h3>
+                                        <div class="input-group">
+                                            <input type="text" id="habitInput" placeholder="Add a habit">
+                                            <button id="addHabitBtn" class="add-button">Add</button>
+                                        </div>
+                                        <div id="habitList" class="items-list"></div>
+                                    </div>
+
+                                    <div class="daily-card">
+                                        <h3><i class="fas fa-note-sticky"></i> Personal Notes</h3>
+                                        <div class="input-group">
+                                            <textarea id="noteInput" placeholder="Write a note..."></textarea>
+                                            <button id="addNoteBtn" class="add-button">Save Note</button>
+                                        </div>
+                                        <div id="notesList" class="items-list"></div>
+                                    </div>
+
+                                    <div class="daily-card">
+                                        <h3><i class="fas fa-phone-emergency"></i> Emergency Contacts</h3>
+                                        <div class="input-group">
+                                            <input type="text" id="contactName" placeholder="Contact name">
+                                            <input type="tel" id="contactPhone" placeholder="Phone number">
+                                            <button id="addContactBtn" class="add-button">Add</button>
+                                        </div>
+                                        <div id="contactsList" class="items-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Student Support Tab -->
+                        <div id="support-tab" class="tab-content">
+                            <h2>Student Support System</h2>
+                            <div class="feature-section">
+                                <div class="support-grid">
+                                    <div class="support-card">
+                                        <h3><i class="fas fa-comments"></i> Peer Support Chat</h3>
+                                        <p style="color: #666; margin: 1rem 0;">Connect with other students for support and encouragement.</p>
+                                        <textarea id="chatMessage" placeholder="Type your message..." style="width: 100%; height: 80px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-family: Roboto;"></textarea>
+                                        <button id="sendMessageBtn" class="add-button" style="margin-top: 0.5rem;">Send Message</button>
+                                        <div id="chatHistory" class="chat-list" style="margin-top: 1rem; max-height: 300px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 4px; padding: 0.5rem;"></div>
+                                    </div>
+
+                                    <div class="support-card">
+                                        <h3><i class="fas fa-star"></i> Self-Care Recommendations</h3>
+                                        <button class="recommendation-btn" id="getRecommendationBtn">Get Recommendation</button>
+                                        <p id="recommendation" style="margin-top: 1rem; padding: 1rem; background: #f0f8ff; border-radius: 4px; display: none;"></p>
+                                    </div>
+
+                                    <div class="support-card">
+                                        <h3><i class="fas fa-trophy"></i> Academic Encouragement</h3>
+                                        <p id="encouragement" style="margin-top: 1rem; padding: 1rem; background: #fffacd; border-radius: 4px;"></p>
+                                        <button class="recommendation-btn" id="getEncouragementBtn">Get Encouragement</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Tab -->
+                        <div id="profile-tab" class="tab-content">
+                            <h2>User Profile</h2>
+                            <div class="profile-section">
+                                <div class="profile-form">
+                                    <div class="form-group">
+                                        <label for="nicknameName">Nickname</label>
+                                        <input type="text" id="nicknameInput" placeholder="Your nickname">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="profileEmail">Email</label>
+                                        <input type="email" id="profileEmail" placeholder="Your email" disabled>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="profileRole">Role</label>
+                                        <input type="text" id="profileRole" placeholder="Your role" disabled>
+                                    </div>
+
+                                    <button id="saveProfileBtn" class="add-button">Save Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 LifeCare. All rights reserved. | Empowering students to achieve excellence.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
