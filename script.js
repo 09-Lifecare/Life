@@ -1,907 +1,758 @@
-// ===========================
-// INITIALIZATION & VARIABLES
-// ===========================
+// ========== NAVIGATION ========== 
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
 
-const sections = {
-    home: document.getElementById('home'),
-    login: document.getElementById('login'),
-    dashboard: document.getElementById('dashboard')
-};
-
-let currentUser = null;
-let userData = {
-    tasks: [],
-    water: [],
-    sleep: [],
-    mood: [],
-    stress: [],
-    medications: [],
-    meals: [],
-    activities: [],
-    habits: [],
-    notes: [],
-    contacts: [],
-    journal: [],
-    chat: []
-};
-
-// ===========================
-// NAVIGATION & SECTION SWITCHING
-// ===========================
-
-function showSection(sectionName) {
-    Object.values(sections).forEach(section => {
-        if (section) section.classList.remove('active');
+        const page = link.dataset.page;
+        navigateToPage(page);
     });
-    if (sections[sectionName]) {
-        sections[sectionName].classList.add('active');
+});
+
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+
+hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+});
+
+// Close hamburger menu when link is clicked
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+    });
+});
+
+// ========== PAGE NAVIGATION ========== 
+function navigateToPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    
+    switch(page) {
+        case 'home':
+            document.getElementById('homePage').classList.add('active');
+            break;
+        case 'features':
+            document.getElementById('featuresPage').classList.add('active');
+            break;
+        case 'about':
+            document.getElementById('aboutPage').classList.add('active');
+            break;
+        case 'contact':
+            document.getElementById('contactPage').classList.add('active');
+            break;
     }
 }
 
-// Navigation menu handling
-document.querySelectorAll('[data-section]').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const section = e.target.getAttribute('data-section');
-        
-        // Update active nav link
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        e.target.classList.add('active');
-        
-        // Close mobile menu
-        const navMenu = document.getElementById('navMenu');
-        navMenu.classList.remove('active');
-        
-        // Show appropriate section
-        if (section === 'home') {
-            showSection('home');
-            window.scrollTo(0, 0);
-        } else if (section === 'features') {
-            showSection('home');
-            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
-        } else if (section === 'about') {
-            showSection('home');
-            document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
-        } else if (section === 'contact') {
-            showSection('home');
-            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-        }
-    });
-});
+// ========== LOGIN ========== 
+function showLoginForm() {
+    document.getElementById('loginModal').classList.add('show');
+}
 
-// ===========================
-// LOGIN/LOGOUT FUNCTIONALITY
-// ===========================
+function closeLoginForm() {
+    document.getElementById('loginModal').classList.remove('show');
+}
 
-const getStartedBtn = document.getElementById('getStartedBtn');
-const loginForm = document.getElementById('loginForm');
-const backBtn = document.getElementById('backBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const logoutItem = document.getElementById('logoutItem');
-
-getStartedBtn.addEventListener('click', () => {
-    showSection('login');
-    document.querySelector('.nav-link').classList.remove('active');
-});
-
-backBtn.addEventListener('click', () => {
-    showSection('home');
-    document.querySelector('.nav-link').classList.add('active');
-    document.getElementById('loginError').style.display = 'none';
-});
-
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+function handleLogin(event) {
+    event.preventDefault();
     
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const role = document.getElementById('role').value;
-    
-    // Basic validation
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Simple validation
     if (email && password && role) {
         // Store user data in localStorage
-        currentUser = {
-            email: email,
-            role: role,
-            nickname: email.split('@')[0]
-        };
-        
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        localStorage.setItem('userData', JSON.stringify(userData));
-        
-        document.getElementById('loginError').style.display = 'none';
-        showDashboard();
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('userName', email.split('@')[0]);
+        localStorage.setItem('isLoggedIn', 'true');
+
+        // Show dashboard
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('dashboardPage').classList.add('active');
+        document.getElementById('logoutNav').style.display = 'block';
+
+        // Initialize dashboard
+        initializeDashboard();
+        closeLoginForm();
     } else {
-        document.getElementById('loginError').style.display = 'block';
+        errorMessage.textContent = 'Invalid login credentials!';
+        errorMessage.classList.add('show');
     }
-});
+}
 
-logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('userData');
-    currentUser = null;
-    userData = {
-        tasks: [],
-        water: [],
-        sleep: [],
-        mood: [],
-        stress: [],
-        medications: [],
-        meals: [],
-        activities: [],
-        habits: [],
-        notes: [],
-        contacts: [],
-        journal: [],
-        chat: []
-    };
+function logout() {
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('isLoggedIn');
     
-    logoutItem.style.display = 'none';
-    showSection('home');
-    document.querySelector('.nav-link').classList.add('active');
-    loginForm.reset();
-    document.getElementById('loginError').style.display = 'none';
-});
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('homePage').classList.add('active');
+    document.getElementById('logoutNav').style.display = 'none';
+    document.getElementById('loginForm').reset();
+}
 
-// ===========================
-// DASHBOARD FUNCTIONALITY
-// ===========================
+// ========== DASHBOARD INITIALIZATION ========== 
+function initializeDashboard() {
+    const userName = localStorage.getItem('userName') || 'User';
+    const userRole = localStorage.getItem('userRole') || 'Student';
 
-function showDashboard() {
-    showSection('dashboard');
-    logoutItem.style.display = 'block';
-    
-    if (localStorage.getItem('user')) {
-        currentUser = JSON.parse(localStorage.getItem('user'));
-        userData = JSON.parse(localStorage.getItem('userData')) || userData;
-    }
-    
-    updateUserGreeting();
+    document.getElementById('userGreeting').textContent = `Hi, ${userName}`;
+    document.getElementById('userRole').textContent = userRole;
+    document.getElementById('profileName').value = userName;
+    document.getElementById('profileNickname').value = userName;
+    document.getElementById('profileEmail').value = localStorage.getItem('userEmail');
+    document.getElementById('profileRole').value = userRole;
+
     loadDashboardData();
-    setupDashboardListeners();
 }
 
-function updateUserGreeting() {
-    if (currentUser) {
-        document.getElementById('userGreeting').textContent = `Hi, ${currentUser.nickname}`;
-        document.getElementById('userRole').textContent = `(${currentUser.role})`;
-    }
+// Sidebar navigation
+document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        const section = link.dataset.section;
+        showDashboardSection(section);
+    });
+});
+
+function showDashboardSection(section) {
+    document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(section + 'Section').classList.add('active');
 }
 
-function loadDashboardData() {
-    // Update dashboard cards
-    document.getElementById('totalTasks').textContent = userData.tasks.length;
-    document.getElementById('completedTasks').textContent = userData.tasks.filter(t => t.completed).length;
-    document.getElementById('waterIntake').textContent = (userData.water.reduce((a, b) => a + parseFloat(b.amount || 0), 0)).toFixed(1) + 'L';
-    document.getElementById('sleepHours').textContent = (userData.sleep.reduce((a, b) => a + parseFloat(b.hours || 0), 0)).toFixed(1) + 'h';
-    document.getElementById('pendingTasks').textContent = userData.tasks.filter(t => !t.completed).length;
-    document.getElementById('priorityTasks').textContent = userData.tasks.filter(t => t.priority === 'high').length;
-    document.getElementById('todayShifts').textContent = userData.tasks.filter(t => t.type === 'shift').length;
-    document.getElementById('upcomingEvents').textContent = userData.tasks.filter(t => t.type === 'event').length;
-    
-    // Load all data into respective sections
-    loadClasses();
-    loadTasks();
-    loadWaterHistory();
-    loadSleepHistory();
-    loadMedications();
-    loadMeals();
-    loadActivities();
-    loadHabits();
-    loadNotes();
-    loadContacts();
-    loadMoodHistory();
-    loadStressHistory();
-    loadJournal();
-    loadChat();
-}
+// ========== SMART ACADEMIC PLANNER ========== 
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-function setupDashboardListeners() {
-    // Sidebar navigation
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            
-            const tab = e.currentTarget.getAttribute('data-tab');
-            showTab(tab);
-            
-            // Close sidebar on mobile
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.remove('active');
-        });
-    });
+function addTask() {
+    const className = document.getElementById('className').value;
+    const taskName = document.getElementById('taskName').value;
+    const dueDate = document.getElementById('dueDate').value;
+    const priority = document.getElementById('priority').value;
 
-    // Dashboard card navigation
-    document.querySelectorAll('.dashboard-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const cardType = card.getAttribute('data-card');
-            const tabMap = {
-                'academic': 'academic',
-                'health': 'health',
-                'tasks': 'academic',
-                'budget': 'daily',
-                'mental': 'mental',
-                'schedule': 'academic'
-            };
-            
-            const tab = tabMap[cardType];
-            if (tab) {
-                const link = document.querySelector(`[data-tab="${tab}"]`);
-                if (link) link.click();
-            }
-        });
-    });
-
-    // Menu toggle for mobile
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.querySelector('.sidebar');
-    const closeSidebar = document.getElementById('closeSidebar');
-
-    if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-    }
-
-    if (closeSidebar) {
-        closeSidebar.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-        });
-    }
-
-    // Smart Academic Planner
-    document.getElementById('addClassBtn')?.addEventListener('click', addClassInput);
-    document.getElementById('addTaskBtn')?.addEventListener('click', addTaskInput);
-
-    // Health & Wellness
-    document.getElementById('addWaterBtn')?.addEventListener('click', addWater);
-    document.getElementById('addSleepBtn')?.addEventListener('click', addSleep);
-    document.getElementById('addMedicationBtn')?.addEventListener('click', addMedication);
-    document.getElementById('addMealBtn')?.addEventListener('click', addMeal);
-    document.getElementById('addActivityBtn')?.addEventListener('click', addActivity);
-
-    // Mental Health
-    document.querySelectorAll('.mood-btn')?.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
-            e.currentTarget.classList.add('selected');
-            logMood(e.currentTarget.getAttribute('data-mood'));
-        });
-    });
-
-    document.getElementById('stressSlider')?.addEventListener('input', (e) => {
-        document.getElementById('stressValue').textContent = e.target.value + '/10';
-    });
-
-    document.getElementById('logStressBtn')?.addEventListener('click', logStress);
-    document.getElementById('breathingBtn')?.addEventListener('click', startBreathingExercise);
-    document.getElementById('getTipBtn')?.addEventListener('click', getMotivationalTip);
-    document.getElementById('saveJournalBtn')?.addEventListener('click', saveJournal);
-
-    // Daily Life
-    document.getElementById('addHabitBtn')?.addEventListener('click', addHabit);
-    document.getElementById('addNoteBtn')?.addEventListener('click', addNote);
-    document.getElementById('addContactBtn')?.addEventListener('click', addContact);
-
-    // Student Support
-    document.getElementById('sendMessageBtn')?.addEventListener('click', sendMessage);
-    document.getElementById('getRecommendationBtn')?.addEventListener('click', getRecommendation);
-    document.getElementById('getEncouragementBtn')?.addEventListener('click', getEncouragement);
-
-    // Profile
-    document.getElementById('saveProfileBtn')?.addEventListener('click', saveProfile);
-    
-    if (currentUser) {
-        document.getElementById('nicknameInput').value = currentUser.nickname;
-        document.getElementById('profileEmail').value = currentUser.email;
-        document.getElementById('profileRole').value = currentUser.role;
-    }
-}
-
-function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    const tab = document.getElementById(tabName + '-tab');
-    if (tab) {
-        tab.classList.add('active');
-    }
-}
-
-// ===========================
-// SMART ACADEMIC PLANNER
-// ===========================
-
-function addClassInput() {
-    const className = prompt('Enter class name:');
-    if (className) {
-        const classObj = {
+    if (taskName && className && dueDate) {
+        const task = {
             id: Date.now(),
-            name: className,
-            time: prompt('Enter class time:') || 'TBD'
+            className,
+            taskName,
+            dueDate,
+            priority,
+            completed: false
         };
-        userData.tasks.push({ ...classObj, type: 'class' });
-        saveUserData();
-        loadClasses();
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        
+        document.getElementById('className').value = '';
+        document.getElementById('taskName').value = '';
+        document.getElementById('dueDate').value = '';
+        
+        renderTasks();
+        updateDashboardStats();
     }
 }
 
-function loadClasses() {
-    const classesList = document.getElementById('classesList');
-    const classes = userData.tasks.filter(t => t.type === 'class');
-    
-    if (classes.length === 0) {
-        classesList.innerHTML = '<p class="empty-message">No classes added yet. Click "Add Class" to get started.</p>';
-        return;
-    }
-    
-    classesList.innerHTML = classes.map(cls => `
-        <div class="item">
-            <div class="item-content">
-                <strong>${cls.name}</strong> - ${cls.time}
-            </div>
-            <button class="item-delete" onclick="deleteItem(${cls.id})">Delete</button>
-        </div>
-    `).join('');
-}
-
-function addTaskInput() {
-    const taskName = prompt('Enter task name:');
-    if (taskName) {
-        const priority = prompt('Enter priority (high/medium/low):') || 'medium';
-        const taskObj = {
-            id: Date.now(),
-            name: taskName,
-            priority: priority,
-            completed: false,
-            type: 'task'
-        };
-        userData.tasks.push(taskObj);
-        saveUserData();
-        loadTasks();
-    }
-}
-
-function loadTasks() {
+function renderTasks() {
     const tasksList = document.getElementById('tasksList');
-    const tasks = userData.tasks.filter(t => t.type === 'task');
-    
-    if (tasks.length === 0) {
-        tasksList.innerHTML = '<p class="empty-message">No tasks added yet. Click "Add Task" to get started.</p>';
-        return;
-    }
-    
-    tasksList.innerHTML = tasks.map(task => `
-        <div class="item">
-            <div class="item-content">
-                <strong>${task.name}</strong> - Priority: ${task.priority}
-                <input type="checkbox" ${task.completed ? 'checked' : ''} 
-                    onchange="toggleTaskComplete(${task.id})">
+    tasksList.innerHTML = '';
+
+    tasks.forEach(task => {
+        const taskEl = document.createElement('div');
+        taskEl.className = 'item';
+        taskEl.innerHTML = `
+            <div>
+                <strong>${task.className}</strong> - ${task.taskName}<br>
+                Due: ${task.dueDate} | Priority: ${task.priority}
             </div>
-            <button class="item-delete" onclick="deleteItem(${task.id})">Delete</button>
-        </div>
-    `).join('');
+            <div>
+                <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                <button onclick="deleteTask(${task.id})">Delete</button>
+            </div>
+        `;
+        tasksList.appendChild(taskEl);
+    });
 }
 
-function toggleTaskComplete(id) {
-    const task = userData.tasks.find(t => t.id === id);
+function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
     if (task) {
         task.completed = !task.completed;
-        saveUserData();
-        loadTasks();
-        loadDashboardData();
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        renderTasks();
+        updateDashboardStats();
     }
 }
 
-function deleteItem(id) {
-    userData.tasks = userData.tasks.filter(t => t.id !== id);
-    userData.water = userData.water.filter(w => w.id !== id);
-    userData.sleep = userData.sleep.filter(s => s.id !== id);
-    userData.mood = userData.mood.filter(m => m.id !== id);
-    userData.stress = userData.stress.filter(s => s.id !== id);
-    userData.medications = userData.medications.filter(m => m.id !== id);
-    userData.meals = userData.meals.filter(m => m.id !== id);
-    userData.activities = userData.activities.filter(a => a.id !== id);
-    userData.habits = userData.habits.filter(h => h.id !== id);
-    userData.notes = userData.notes.filter(n => n.id !== id);
-    userData.contacts = userData.contacts.filter(c => c.id !== id);
-    userData.journal = userData.journal.filter(j => j.id !== id);
-    
-    saveUserData();
-    loadDashboardData();
+function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderTasks();
+    updateDashboardStats();
 }
 
-// ===========================
-// HEALTH & WELLNESS MONITORING
-// ===========================
+// ========== HEALTH & WELLNESS ========== 
+let healthData = JSON.parse(localStorage.getItem('healthData')) || {
+    waterIntake: [],
+    sleepHours: [],
+    activities: [],
+    meals: [],
+    medications: []
+};
 
-function addWater() {
-    const amount = prompt('Enter water intake (in liters):');
-    if (amount) {
-        userData.water.push({
-            id: Date.now(),
-            amount: parseFloat(amount),
-            date: new Date().toLocaleString()
+function addWaterIntake() {
+    const amount = parseFloat(document.getElementById('waterAmount').value);
+    if (amount > 0) {
+        healthData.waterIntake.push({
+            date: new Date().toLocaleDateString(),
+            amount: amount
         });
-        saveUserData();
-        loadWaterHistory();
-        loadDashboardData();
+        localStorage.setItem('healthData', JSON.stringify(healthData));
+        document.getElementById('waterAmount').value = '';
+        updateHealthDisplay();
+        updateDashboardStats();
     }
 }
 
-function loadWaterHistory() {
-    const waterHistory = document.getElementById('waterHistory');
-    if (userData.water.length === 0) {
-        waterHistory.innerHTML = '<p style="font-size: 0.85rem; color: #999;">No water intake logged yet.</p>';
-        return;
-    }
-    
-    waterHistory.innerHTML = userData.water.map(w => `
-        <div class="history-item">${w.amount}L - ${w.date}</div>
-    `).join('');
-}
-
-function addSleep() {
-    const hours = prompt('Enter sleep duration (in hours):');
-    if (hours) {
-        userData.sleep.push({
-            id: Date.now(),
-            hours: parseFloat(hours),
-            date: new Date().toLocaleString()
+function addSleepLog() {
+    const hours = parseFloat(document.getElementById('sleepAmount').value);
+    if (hours > 0) {
+        healthData.sleepHours.push({
+            date: new Date().toLocaleDateString(),
+            hours: hours
         });
-        saveUserData();
-        loadSleepHistory();
-        loadDashboardData();
+        localStorage.setItem('healthData', JSON.stringify(healthData));
+        document.getElementById('sleepAmount').value = '';
+        updateHealthDisplay();
+        updateDashboardStats();
     }
-}
-
-function loadSleepHistory() {
-    const sleepHistory = document.getElementById('sleepHistory');
-    if (userData.sleep.length === 0) {
-        sleepHistory.innerHTML = '<p style="font-size: 0.85rem; color: #999;">No sleep data logged yet.</p>';
-        return;
-    }
-    
-    sleepHistory.innerHTML = userData.sleep.map(s => `
-        <div class="history-item">${s.hours}h - ${s.date}</div>
-    `).join('');
-}
-
-function addMedication() {
-    const medication = document.getElementById('medicationInput').value;
-    if (medication) {
-        userData.medications.push({
-            id: Date.now(),
-            name: medication,
-            date: new Date().toLocaleString()
-        });
-        document.getElementById('medicationInput').value = '';
-        saveUserData();
-        loadMedications();
-    }
-}
-
-function loadMedications() {
-    const medList = document.getElementById('medicationList');
-    if (userData.medications.length === 0) {
-        medList.innerHTML = '<p class="empty-message">No medications added.</p>';
-        return;
-    }
-    
-    medList.innerHTML = userData.medications.map(m => `
-        <div class="item">
-            <div class="item-content">${m.name}</div>
-            <button class="item-delete" onclick="deleteItem(${m.id})">Delete</button>
-        </div>
-    `).join('');
-}
-
-function addMeal() {
-    const meal = document.getElementById('mealInput').value;
-    if (meal) {
-        userData.meals.push({
-            id: Date.now(),
-            meal: meal,
-            date: new Date().toLocaleString()
-        });
-        document.getElementById('mealInput').value = '';
-        saveUserData();
-        loadMeals();
-    }
-}
-
-function loadMeals() {
-    const mealList = document.getElementById('mealList');
-    if (userData.meals.length === 0) {
-        mealList.innerHTML = '<p class="empty-message">No meals logged.</p>';
-        return;
-    }
-    
-    mealList.innerHTML = userData.meals.map(m => `
-        <div class="item">
-            <div class="item-content">${m.meal} - ${m.date}</div>
-            <button class="item-delete" onclick="deleteItem(${m.id})">Delete</button>
-        </div>
-    `).join('');
 }
 
 function addActivity() {
-    const activity = document.getElementById('activityInput').value;
-    if (activity) {
-        userData.activities.push({
-            id: Date.now(),
+    const activity = document.getElementById('activity').value;
+    const duration = parseFloat(document.getElementById('activityDuration').value);
+    if (activity && duration > 0) {
+        healthData.activities.push({
+            date: new Date().toLocaleDateString(),
             activity: activity,
-            date: new Date().toLocaleString()
+            duration: duration
         });
-        document.getElementById('activityInput').value = '';
-        saveUserData();
-        loadActivities();
+        localStorage.setItem('healthData', JSON.stringify(healthData));
+        document.getElementById('activity').value = '';
+        document.getElementById('activityDuration').value = '';
+        updateDashboardStats();
     }
 }
 
-function loadActivities() {
-    const actList = document.getElementById('activityList');
-    if (userData.activities.length === 0) {
-        actList.innerHTML = '<p class="empty-message">No activities logged.</p>';
-        return;
+function addMeal() {
+    const meal = document.getElementById('meal').value;
+    const nutrition = document.getElementById('nutrition').value;
+    if (meal) {
+        healthData.meals.push({
+            date: new Date().toLocaleDateString(),
+            meal: meal,
+            nutrition: nutrition
+        });
+        localStorage.setItem('healthData', JSON.stringify(healthData));
+        document.getElementById('meal').value = '';
+        document.getElementById('nutrition').value = '';
     }
+}
+
+function addMedication() {
+    const med = document.getElementById('medication').value;
+    const time = document.getElementById('medTime').value;
+    if (med && time) {
+        healthData.medications.push({
+            date: new Date().toLocaleDateString(),
+            medication: med,
+            time: time
+        });
+        localStorage.setItem('healthData', JSON.stringify(healthData));
+        document.getElementById('medication').value = '';
+        document.getElementById('medTime').value = '';
+    }
+}
+
+function updateHealthDisplay() {
+    const today = new Date().toLocaleDateString();
+    const todayWater = healthData.waterIntake
+        .filter(w => w.date === today)
+        .reduce((sum, w) => sum + w.amount, 0);
     
-    actList.innerHTML = userData.activities.map(a => `
-        <div class="item">
-            <div class="item-content">${a.activity} - ${a.date}</div>
-            <button class="item-delete" onclick="deleteItem(${a.id})">Delete</button>
-        </div>
-    `).join('');
+    const avgSleep = healthData.sleepHours.length > 0
+        ? (healthData.sleepHours.reduce((sum, s) => sum + s.hours, 0) / healthData.sleepHours.length).toFixed(1)
+        : 0;
+
+    document.getElementById('waterTotal').textContent = todayWater.toFixed(1);
+    document.getElementById('sleepAvg').textContent = avgSleep;
 }
 
-// ===========================
-// MENTAL HEALTH & STRESS SUPPORT
-// ===========================
+// ========== MENTAL HEALTH & STRESS ========== 
+let mentalHealthData = JSON.parse(localStorage.getItem('mentalHealthData')) || {
+    mood: [],
+    stress: [],
+    journal: []
+};
 
 function logMood(mood) {
-    userData.mood.push({
-        id: Date.now(),
-        mood: mood,
-        date: new Date().toLocaleString()
+    mentalHealthData.mood.push({
+        date: new Date().toLocaleString(),
+        mood: mood
     });
-    
-    // Update current mood on dashboard
-    document.getElementById('currentMood').textContent = mood;
-    
-    saveUserData();
-    loadMoodHistory();
-}
-
-function loadMoodHistory() {
-    const moodHistory = document.getElementById('moodHistory');
-    if (userData.mood.length === 0) {
-        moodHistory.innerHTML = '<p style="font-size: 0.85rem; color: #999;">No mood logged yet.</p>';
-        return;
-    }
-    
-    moodHistory.innerHTML = userData.mood.slice(-5).map(m => `
-        <div class="history-item">${m.mood} - ${m.date}</div>
-    `).join('');
+    localStorage.setItem('mentalHealthData', JSON.stringify(mentalHealthData));
+    document.getElementById('latestMood').textContent = mood;
+    updateDashboardStats();
 }
 
 function logStress() {
-    const stressLevel = document.getElementById('stressSlider').value;
-    userData.stress.push({
-        id: Date.now(),
-        level: parseInt(stressLevel),
-        date: new Date().toLocaleString()
+    const level = document.getElementById('stressLevel').value;
+    mentalHealthData.stress.push({
+        date: new Date().toLocaleString(),
+        level: level
     });
-    
-    // Update current stress level on dashboard
-    document.getElementById('stressLevel').textContent = stressLevel + '/10';
-    
-    saveUserData();
-    loadStressHistory();
+    localStorage.setItem('mentalHealthData', JSON.stringify(mentalHealthData));
+    updateDashboardStats();
 }
 
-function loadStressHistory() {
-    const stressHistory = document.getElementById('stressHistory');
-    if (userData.stress.length === 0) {
-        stressHistory.innerHTML = '<p style="font-size: 0.85rem; color: #999;">No stress data logged yet.</p>';
-        return;
-    }
-    
-    stressHistory.innerHTML = userData.stress.slice(-5).map(s => `
-        <div class="history-item">Level ${s.level}/10 - ${s.date}</div>
-    `).join('');
-}
+document.getElementById('stressLevel')?.addEventListener('input', (e) => {
+    document.getElementById('stressValue').textContent = e.target.value + '/10';
+});
 
 function startBreathingExercise() {
-    alert('🧘 5-Minute Breathing Exercise Started!\n\n1. Breathe in for 4 counts\n2. Hold for 4 counts\n3. Breathe out for 4 counts\n\nRepeat this 5 times. Focus on your breath and let stress melt away.');
+    const text = document.getElementById('breathingText');
+    let cycle = 0;
+    const cycles = ['Inhale...', 'Hold...', 'Exhale...'];
+    
+    const interval = setInterval(() => {
+        text.textContent = cycles[cycle % 3];
+        cycle++;
+        
+        if (cycle === 12) {
+            clearInterval(interval);
+            text.textContent = 'Breathing exercise completed!';
+        }
+    }, 2000);
 }
 
-function getMotivationalTip() {
+function generateMotivationalTip() {
     const tips = [
-        '💪 You are capable of amazing things. Believe in yourself!',
-        '🌟 Every small step counts. Keep moving forward!',
-        '❤️ Take care of yourself. You deserve it!',
-        '🎯 Focus on what you can control. Let go of the rest.',
-        '✨ You are doing better than you think you are!',
-        '🌈 This challenging moment will pass. Stay strong!',
-        '📚 Learning never stops. Embrace the journey!',
-        '🏆 Success is not final, failure is not fatal. Keep trying!'
+        '🌟 You are stronger than you think. Take it one step at a time!',
+        '💪 Every small progress is a victory. Celebrate your wins!',
+        '🌈 Challenges are opportunities to grow. Embrace them!',
+        '😊 Your mental health matters. Take care of yourself!',
+        '🎯 Focus on what you can control and let go of the rest!',
+        '💖 Be kind to yourself. You deserve compassion!',
+        '✨ You have overcome 100% of your worst days. You\'re unstoppable!',
+        '🚀 Your potential is limitless. Keep pushing forward!'
     ];
     
     const randomTip = tips[Math.floor(Math.random() * tips.length)];
     document.getElementById('motivationalTip').textContent = randomTip;
 }
 
-function saveJournal() {
+function saveJournalEntry() {
     const entry = document.getElementById('journalEntry').value;
-    if (entry.trim()) {
-        userData.journal.push({
-            id: Date.now(),
-            entry: entry,
-            date: new Date().toLocaleString()
+    if (entry) {
+        mentalHealthData.journal.push({
+            date: new Date().toLocaleString(),
+            entry: entry
         });
+        localStorage.setItem('mentalHealthData', JSON.stringify(mentalHealthData));
         document.getElementById('journalEntry').value = '';
-        saveUserData();
-        loadJournal();
-    }
-}
-
-function loadJournal() {
-    const journalList = document.getElementById('journalList');
-    if (userData.journal.length === 0) {
-        journalList.innerHTML = '<p class="empty-message">No journal entries yet. Start reflecting!</p>';
-        return;
-    }
-    
-    journalList.innerHTML = userData.journal.slice().reverse().map(j => `
-        <div class="item">
-            <div class="item-content">
-                <strong>${j.date}</strong><br>${j.entry}
+        
+        const journalHistory = document.getElementById('journalHistory');
+        const entryEl = document.createElement('div');
+        entryEl.className = 'item';
+        entryEl.innerHTML = `
+            <div>
+                <strong>${mentalHealthData.journal[mentalHealthData.journal.length - 1].date}</strong><br>
+                ${entry}
             </div>
-            <button class="item-delete" onclick="deleteItem(${j.id})">Delete</button>
-        </div>
-    `).join('');
+        `;
+        journalHistory.appendChild(entryEl);
+    }
 }
 
-// ===========================
-// DAILY LIFE MANAGEMENT
-// ===========================
+// ========== DAILY LIFE MANAGEMENT ========== 
+let dailyData = JSON.parse(localStorage.getItem('dailyData')) || {
+    habits: [],
+    notes: [],
+    expenses: [],
+    emergencyContacts: []
+};
 
 function addHabit() {
-    const habit = document.getElementById('habitInput').value;
-    if (habit) {
-        userData.habits.push({
+    const habitName = document.getElementById('habitName').value;
+    if (habitName) {
+        dailyData.habits.push({
             id: Date.now(),
-            habit: habit,
+            name: habitName,
             completed: false,
-            date: new Date().toLocaleDateString()
+            createdDate: new Date().toLocaleDateString()
         });
-        document.getElementById('habitInput').value = '';
-        saveUserData();
-        loadHabits();
+        localStorage.setItem('dailyData', JSON.stringify(dailyData));
+        document.getElementById('habitName').value = '';
+        renderHabits();
+        updateDashboardStats();
     }
 }
 
-function loadHabits() {
-    const habitList = document.getElementById('habitList');
-    if (userData.habits.length === 0) {
-        habitList.innerHTML = '<p class="empty-message">No habits tracked yet.</p>';
-        return;
-    }
-    
-    habitList.innerHTML = userData.habits.map(h => `
-        <div class="item">
-            <div class="item-content">
-                <input type="checkbox" ${h.completed ? 'checked' : ''} 
-                    onchange="toggleHabit(${h.id})">
-                <span style="text-decoration: ${h.completed ? 'line-through' : 'none'}">${h.habit}</span>
+function renderHabits() {
+    const habitsList = document.getElementById('habitsList');
+    habitsList.innerHTML = '';
+
+    dailyData.habits.forEach(habit => {
+        const habitEl = document.createElement('div');
+        habitEl.className = 'item';
+        habitEl.innerHTML = `
+            <div>
+                <strong>${habit.name}</strong>
             </div>
-            <button class="item-delete" onclick="deleteItem(${h.id})">Delete</button>
-        </div>
-    `).join('');
+            <div>
+                <input type="checkbox" ${habit.completed ? 'checked' : ''} onchange="toggleHabit(${habit.id})">
+                <button onclick="deleteHabit(${habit.id})">Delete</button>
+            </div>
+        `;
+        habitsList.appendChild(habitEl);
+    });
 }
 
 function toggleHabit(id) {
-    const habit = userData.habits.find(h => h.id === id);
+    const habit = dailyData.habits.find(h => h.id === id);
     if (habit) {
         habit.completed = !habit.completed;
-        saveUserData();
-        loadHabits();
+        localStorage.setItem('dailyData', JSON.stringify(dailyData));
+        renderHabits();
+        updateDashboardStats();
     }
+}
+
+function deleteHabit(id) {
+    dailyData.habits = dailyData.habits.filter(h => h.id !== id);
+    localStorage.setItem('dailyData', JSON.stringify(dailyData));
+    renderHabits();
+    updateDashboardStats();
 }
 
 function addNote() {
-    const noteText = document.getElementById('noteInput').value;
-    if (noteText) {
-        userData.notes.push({
+    const title = document.getElementById('noteTitle').value;
+    const content = document.getElementById('noteContent').value;
+    if (title && content) {
+        dailyData.notes.push({
             id: Date.now(),
-            note: noteText,
-            date: new Date().toLocaleString()
+            title: title,
+            content: content,
+            createdDate: new Date().toLocaleString()
         });
-        document.getElementById('noteInput').value = '';
-        saveUserData();
-        loadNotes();
+        localStorage.setItem('dailyData', JSON.stringify(dailyData));
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteContent').value = '';
+        renderNotes();
     }
 }
 
-function loadNotes() {
+function renderNotes() {
     const notesList = document.getElementById('notesList');
-    if (userData.notes.length === 0) {
-        notesList.innerHTML = '<p class="empty-message">No notes saved yet.</p>';
-        return;
-    }
-    
-    notesList.innerHTML = userData.notes.slice().reverse().map(n => `
-        <div class="item">
-            <div class="item-content">
-                <strong>${n.date}</strong><br>${n.note}
+    notesList.innerHTML = '';
+
+    dailyData.notes.forEach(note => {
+        const noteEl = document.createElement('div');
+        noteEl.className = 'item';
+        noteEl.innerHTML = `
+            <div>
+                <strong>${note.title}</strong><br>
+                ${note.content}<br>
+                <small>${note.createdDate}</small>
             </div>
-            <button class="item-delete" onclick="deleteItem(${n.id})">Delete</button>
-        </div>
-    `).join('');
+            <button onclick="deleteNote(${note.id})">Delete</button>
+        `;
+        notesList.appendChild(noteEl);
+    });
 }
 
-function addContact() {
-    const name = document.getElementById('contactName').value;
+function deleteNote(id) {
+    dailyData.notes = dailyData.notes.filter(n => n.id !== id);
+    localStorage.setItem('dailyData', JSON.stringify(dailyData));
+    renderNotes();
+}
+
+function addExpense() {
+    const item = document.getElementById('expenseItem').value;
+    const amount = parseFloat(document.getElementById('expenseAmount').value);
+    if (item && amount > 0) {
+        dailyData.expenses.push({
+            id: Date.now(),
+            item: item,
+            amount: amount,
+            date: new Date().toLocaleDateString()
+        });
+        localStorage.setItem('dailyData', JSON.stringify(dailyData));
+        document.getElementById('expenseItem').value = '';
+        document.getElementById('expenseAmount').value = '';
+        renderExpenses();
+        updateDashboardStats();
+    }
+}
+
+function renderExpenses() {
+    const expensesList = document.getElementById('expensesList');
+    expensesList.innerHTML = '';
+
+    let totalExpenses = 0;
+    dailyData.expenses.forEach(expense => {
+        totalExpenses += expense.amount;
+        const expenseEl = document.createElement('div');
+        expenseEl.className = 'item';
+        expenseEl.innerHTML = `
+            <div>
+                <strong>${expense.item}</strong> - ₱${expense.amount.toFixed(2)}<br>
+                <small>${expense.date}</small>
+            </div>
+            <button onclick="deleteExpense(${expense.id})">Delete</button>
+        `;
+        expensesList.appendChild(expenseEl);
+    });
+
+    document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2);
+    const remainingBudget = 5000 - totalExpenses;
+    document.getElementById('remainingBudget').textContent = remainingBudget.toFixed(2);
+}
+
+function deleteExpense(id) {
+    dailyData.expenses = dailyData.expenses.filter(e => e.id !== id);
+    localStorage.setItem('dailyData', JSON.stringify(dailyData));
+    renderExpenses();
+    updateDashboardStats();
+}
+
+function addEmergencyContact() {
+    const name = document.getElementById('contactPerson').value;
     const phone = document.getElementById('contactPhone').value;
-    
     if (name && phone) {
-        userData.contacts.push({
+        dailyData.emergencyContacts.push({
             id: Date.now(),
             name: name,
             phone: phone
         });
-        document.getElementById('contactName').value = '';
+        localStorage.setItem('dailyData', JSON.stringify(dailyData));
+        document.getElementById('contactPerson').value = '';
         document.getElementById('contactPhone').value = '';
-        saveUserData();
-        loadContacts();
+        renderEmergencyContacts();
     }
 }
 
-function loadContacts() {
-    const contactsList = document.getElementById('contactsList');
-    if (userData.contacts.length === 0) {
-        contactsList.innerHTML = '<p class="empty-message">No emergency contacts saved.</p>';
-        return;
-    }
-    
-    contactsList.innerHTML = userData.contacts.map(c => `
-        <div class="item">
-            <div class="item-content">
-                <strong>${c.name}</strong><br><a href="tel:${c.phone}">${c.phone}</a>
+function renderEmergencyContacts() {
+    const contactsList = document.getElementById('emergencyContactsList');
+    contactsList.innerHTML = '';
+
+    dailyData.emergencyContacts.forEach(contact => {
+        const contactEl = document.createElement('div');
+        contactEl.className = 'item';
+        contactEl.innerHTML = `
+            <div>
+                <strong>${contact.name}</strong><br>
+                <a href="tel:${contact.phone}">${contact.phone}</a>
             </div>
-            <button class="item-delete" onclick="deleteItem(${c.id})">Delete</button>
-        </div>
-    `).join('');
+            <button onclick="deleteContact(${contact.id})">Delete</button>
+        `;
+        contactsList.appendChild(contactEl);
+    });
 }
 
-// ===========================
-// STUDENT SUPPORT SYSTEM
-// ===========================
+function deleteContact(id) {
+    dailyData.emergencyContacts = dailyData.emergencyContacts.filter(c => c.id !== id);
+    localStorage.setItem('dailyData', JSON.stringify(dailyData));
+    renderEmergencyContacts();
+}
 
-function sendMessage() {
+// ========== STUDENT SUPPORT SYSTEM ========== 
+let supportData = JSON.parse(localStorage.getItem('supportData')) || {
+    chat: [],
+    community: []
+};
+
+function sendChatMessage() {
     const message = document.getElementById('chatMessage').value;
-    if (message.trim()) {
-        userData.chat.push({
-            id: Date.now(),
-            user: currentUser.nickname,
+    if (message) {
+        supportData.chat.push({
+            user: localStorage.getItem('userName') || 'You',
             message: message,
-            timestamp: new Date().toLocaleTimeString()
+            time: new Date().toLocaleTimeString()
         });
+        localStorage.setItem('supportData', JSON.stringify(supportData));
         document.getElementById('chatMessage').value = '';
-        saveUserData();
-        loadChat();
+        renderChatBox();
     }
 }
 
-function loadChat() {
-    const chatHistory = document.getElementById('chatHistory');
-    if (userData.chat.length === 0) {
-        chatHistory.innerHTML = '<p style="text-align: center; color: #999;">Start a conversation!</p>';
-        return;
-    }
-    
-    chatHistory.innerHTML = userData.chat.slice().reverse().map(c => `
-        <div class="chat-item">
-            <strong>${c.user}</strong> <small>${c.timestamp}</small>
-            <p>${c.message}</p>
-        </div>
-    `).join('');
-    
-    chatHistory.scrollTop = chatHistory.scrollHeight;
+function renderChatBox() {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = '';
+
+    supportData.chat.forEach(msg => {
+        const msgEl = document.createElement('div');
+        msgEl.style.cssText = 'padding: 10px; margin: 5px 0; background: #e3f2fd; border-radius: 5px;';
+        msgEl.innerHTML = `<strong>${msg.user}</strong> (${msg.time})<br>${msg.message}`;
+        chatBox.appendChild(msgEl);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-function getRecommendation() {
+function getAcademicEncouragement() {
+    const messages = [
+        'You\'re doing an amazing job! Keep up the hard work! 🎓',
+        'Every challenge you face is making you stronger! 💪',
+        'You have the skills and determination to succeed! ✨',
+        'Your effort today will pay off tomorrow! 🚀',
+        'Believe in yourself - you are capable of great things! 🌟'
+    ];
+    
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    document.getElementById('encouragementMessage').textContent = randomMessage;
+}
+
+function generateSelfCareRec() {
     const recommendations = [
-        '🧘 Try a 10-minute meditation session to reduce stress.',
-        '🚶 Take a short walk outside to refresh your mind.',
-        '📖 Read something inspiring or take a hobby break.',
-        '💤 Ensure you get 7-9 hours of sleep tonight.',
-        '🥗 Focus on eating balanced meals with fruits and vegetables.',
-        '📱 Reduce screen time and take regular breaks.',
-        '🤝 Reach out to a friend or family member for support.',
+        '💧 Stay hydrated! Drink more water today.',
+        '😴 Get a good night\'s sleep. Your body needs rest.',
+        '🧘 Try some meditation or deep breathing exercises.',
+        '🏃 Take a walk or do some light exercise.',
+        '📖 Read something inspirational or relaxing.',
+        '☕ Take a break and enjoy your favorite beverage.',
         '🎵 Listen to your favorite music to uplift your mood.'
     ];
     
     const randomRec = recommendations[Math.floor(Math.random() * recommendations.length)];
-    const recElement = document.getElementById('recommendation');
-    recElement.textContent = randomRec;
-    recElement.style.display = 'block';
+    document.getElementById('selfCareRec').textContent = '📋 ' + randomRec;
 }
 
-function getEncouragement() {
-    const encouragements = [
-        '🌟 You\'ve come so far. Be proud of yourself!',
-        '💪 You are stronger than you think you are.',
-        '🎯 Your goals are within reach. Keep pushing!',
-        '✨ Every day is a new opportunity to succeed.',
-        '🏆 Hard work and dedication pay off in the end.',
-        '❤️ You are worthy of success and happiness.',
-        '🌈 Challenges are just opportunities in disguise.',
-        '📚 Your education is an investment in your future.'
-    ];
-    
-    const randomEnc = encouragements[Math.floor(Math.random() * encouragements.length)];
-    document.getElementById('encouragement').textContent = randomEnc;
+function postToCommunity() {
+    const post = document.getElementById('communityPost').value;
+    if (post) {
+        supportData.community.push({
+            user: localStorage.getItem('userName') || 'Anonymous',
+            post: post,
+            time: new Date().toLocaleString()
+        });
+        localStorage.setItem('supportData', JSON.stringify(supportData));
+        document.getElementById('communityPost').value = '';
+        renderCommunityBoard();
+        updateDashboardStats();
+    }
 }
 
-// ===========================
-// PROFILE MANAGEMENT
-// ===========================
+function renderCommunityBoard() {
+    const board = document.getElementById('communityBoard');
+    board.innerHTML = '';
 
+    supportData.community.forEach(post => {
+        const postEl = document.createElement('div');
+        postEl.className = 'item';
+        postEl.style.marginBottom = '1rem';
+        postEl.innerHTML = `
+            <div>
+                <strong>${post.user}</strong> - ${post.time}<br>
+                ${post.post}
+            </div>
+        `;
+        board.appendChild(postEl);
+    });
+}
+
+// ========== PROFILE ========== 
 function saveProfile() {
-    const nickname = document.getElementById('nicknameInput').value;
-    if (nickname && currentUser) {
-        currentUser.nickname = nickname;
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        updateUserGreeting();
+    const nickname = document.getElementById('profileNickname').value;
+    const name = document.getElementById('profileName').value;
+
+    if (nickname && name) {
+        localStorage.setItem('userName', nickname);
+        document.getElementById('userGreeting').textContent = `Hi, ${nickname}`;
         alert('Profile updated successfully!');
     }
 }
 
-// ===========================
-// DATA PERSISTENCE
-// ===========================
-
-function saveUserData() {
-    if (currentUser) {
-        localStorage.setItem('userData', JSON.stringify(userData));
-    }
+// ========== DASHBOARD NAVIGATION ========== 
+function navigateDashboard(section) {
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.section === section) {
+            link.classList.add('active');
+        }
+    });
+    showDashboardSection(section);
 }
 
-// ===========================
-// HAMBURGER MENU
-// ===========================
+// ========== UPDATE DASHBOARD STATS ========== 
+function updateDashboardStats() {
+    // Tasks
+    const completedTasks = tasks.filter(t => t.completed).length;
+    document.getElementById('totalTasks').textContent = tasks.length;
+    document.getElementById('completedTasks').textContent = completedTasks;
 
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.getElementById('navMenu');
+    // Health
+    const today = new Date().toLocaleDateString();
+    const todayWater = healthData.waterIntake
+        .filter(w => w.date === today)
+        .reduce((sum, w) => sum + w.amount, 0);
+    const avgSleep = healthData.sleepHours.length > 0
+        ? (healthData.sleepHours.reduce((sum, s) => sum + s.hours, 0) / healthData.sleepHours.length).toFixed(1)
+        : 0;
+    document.getElementById('waterIntake').textContent = todayWater.toFixed(1);
+    document.getElementById('sleepHours').textContent = avgSleep;
 
-hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
+    // Daily
+    const completedHabits = dailyData.habits.filter(h => h.completed).length;
+    document.getElementById('habitsTracked').textContent = completedHabits;
+    
+    const totalExpenses = dailyData.expenses.reduce((sum, e) => sum + e.amount, 0);
+    document.getElementById('budget').textContent = (5000 - totalExpenses).toFixed(2);
 
-// ===========================
-// INITIALIZATION
-// ===========================
+    // Mental
+    document.getElementById('moodEntries').textContent = mentalHealthData.mood.length;
+    const avgStress = mentalHealthData.stress.length > 0
+        ? (mentalHealthData.stress.reduce((sum, s) => parseInt(s.level), 0) / mentalHealthData.stress.length).toFixed(1)
+        : 0;
+    document.getElementById('avgStress').textContent = avgStress;
 
-// Check if user is already logged in
+    // Support
+    document.getElementById('communityPosts').textContent = supportData.community.length;
+    document.getElementById('supportMessages').textContent = supportData.chat.length;
+}
+
+// ========== LOAD DASHBOARD DATA ========== 
+function loadDashboardData() {
+    renderTasks();
+    renderHabits();
+    renderNotes();
+    renderExpenses();
+    renderEmergencyContacts();
+    renderChatBox();
+    renderCommunityBoard();
+    updateHealthDisplay();
+    updateDashboardStats();
+}
+
+// ========== CONTACT FORM HANDLER ========== 
+function handleContactForm(event) {
+    event.preventDefault();
+    alert('Thank you for your message! We will get back to you soon.');
+    document.querySelector('.contact-form').reset();
+}
+
+// ========== CHECK IF USER IS LOGGED IN ========== 
 window.addEventListener('load', () => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-        currentUser = JSON.parse(storedUser);
-        userData = JSON.parse(localStorage.getItem('userData')) || userData;
-        showDashboard();
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('dashboardPage').classList.add('active');
+        document.getElementById('logoutNav').style.display = 'block';
+        initializeDashboard();
     } else {
-        showSection('home');
-    }
-});
-
-// Prevent back button issues after login
-window.addEventListener('beforeunload', () => {
-    if (currentUser && !document.hidden) {
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        localStorage.setItem('userData', JSON.stringify(userData));
+        document.getElementById('homePage').classList.add('active');
     }
 });
